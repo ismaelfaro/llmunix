@@ -16,9 +16,7 @@ Once you're in the Claude Code console, boot the LLMunix operating system:
 boot llmunix
 ```
 
-<video src="llmunix.mp4" controls width="800">
-  Your browser does not support the video tag.
-</video>
+![LLMunix boot demo](./llmunix.mp4)
 
 *Watch LLMunix boot demonstration*
 
