@@ -33,7 +33,7 @@ This simple command activates the LLMunix kernel by having Claude read and inter
 boot llmunix
 
 # Execute with real tools and live data  
-llmunix execute: "Get live content from https://openai.com/blog and create a research summary"
+llmunix execute: "Get live content from https://huggingface.co/blog and create a research summary"
 
 # Generate training data through simulation
 llmunix simulate: "Research task workflow for fine-tuning dataset"
