@@ -27,7 +27,7 @@ llmunix execute: "Get live content from https://huggingface.co/blog and create a
 **Custom task execution:**
 ```bash  
 # Act as SystemAgent and execute: [your goal] using real tools
-llmunix execute: "Find all Python files in this project and create a code structure summary"
+llmunix execute: "Analyze all markdown components in this system and create an architecture overview"
 ```
 
 ## What is LLMunix?
