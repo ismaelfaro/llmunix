@@ -27,15 +27,25 @@ boot llmunix
 
 This simple command activates the LLMunix kernel by having Claude read and interpret the markdown system files as a functional operating system. **Boot automatically cleans the workspace directory to ensure a fresh execution environment.**
 
-### Quick Start Commands
-```bash
-# Boot the OS (cleans workspace automatically)
-boot llmunix
+### Boot Welcome Message
+When LLMunix boots, display ASCII art welcome and example commands in this format:
 
-# Execute with real tools and live data  
+```
+██╗     ██╗     ███╗   ███╗██╗   ██╗███╗   ██╗██╗██╗  ██╗
+██║     ██║     ████╗ ████║██║   ██║████╗  ██║██║╚██╗██╔╝
+██║     ██║     ██╔████╔██║██║   ██║██╔██╗ ██║██║ ╚███╔╝ 
+██║     ██║     ██║╚██╔╝██║██║   ██║██║╚██╗██║██║ ██╔██╗ 
+███████╗███████╗██║ ╚═╝ ██║╚██████╔╝██║ ╚████║██║██╔╝ ██╗
+╚══════╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
+                Pure Markdown Operating System v1.0
+```
+
+Examples:
+```bash
+llmunix execute: "Monitor 5 tech news sources (TechCrunch, Ars Technica, Hacker News, MIT Tech Review, Wired), extract trending topics, identify patterns, and generate a weekly intelligence briefing"
+
 llmunix execute: "Get live content from https://huggingface.co/blog and create a research summary"
 
-# Generate training data through simulation
 llmunix simulate: "Research task workflow for fine-tuning dataset"
 ```
 
