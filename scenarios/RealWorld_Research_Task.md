@@ -6,7 +6,7 @@ Conduct real research on current AI developments by fetching live content from H
 
 ## Objective
 
-Demonstrate AGI-OS's real-world capabilities by:
+Demonstrate LLM-OS's real-world capabilities by:
 1. Fetching live web content using real HTTP requests
 2. Processing and analyzing actual content 
 3. Creating structured output with multiple formats
@@ -90,4 +90,4 @@ Expected training dataset structure:
 }
 ```
 
-This scenario serves as both a practical demonstration of AGI-OS capabilities and a generator of high-quality training data for developing autonomous AI agents.
+This scenario serves as both a practical demonstration of LLM-OS capabilities and a generator of high-quality training data for developing autonomous AI agents.

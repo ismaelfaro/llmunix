@@ -2,12 +2,12 @@
 
 ## Virtual File System Architecture
 
-LLMunix uses the AGI-OS folder structure as its native file system, treating markdown component definitions as executable programs and system resources.
+LLMunix uses the LLM-OS folder structure as its native file system, treating markdown component definitions as executable programs and system resources.
 
 ### File System Hierarchy
 
 ```
-/ (Root - AGI-OS base directory)
+/ (Root - LLM-OS base directory)
 ├── /system/           # Kernel and system services
 │   ├── SystemAgent.md      # Process orchestrator
 │   ├── SmartLibrary.md     # Component registry

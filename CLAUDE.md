@@ -1,16 +1,16 @@
-# AGI-OS: Claude Code Runtime Configuration
+# LLM-OS: Claude Code Runtime Configuration
 
-This is AGI-OS (Autonomous Generative Intelligence - Operating System), an evolution of AGI-DAF that uses Claude Code as its runtime engine for real tool execution and training data generation.
+This is LLM-OS, an Autonomous Generative Intelligence - Operating System that uses Claude Code as its runtime engine for real tool execution and training data generation.
 
 ## Project Overview
 
-AGI-OS is a document-centric agent framework that operates in two modes:
+LLM-OS is a document-centric agent framework that operates in two modes:
 1. **EXECUTION MODE**: Performs real operations using Claude Code's native tools (WebFetch, Read, Write, Bash, etc.)
 2. **SIMULATION MODE**: Generates training data through simulated tool execution
 
 The framework bridges the gap between simulation and reality by maintaining document-centric agent definitions while executing real tasks through Claude Code's powerful tool ecosystem.
 
-## How to Run AGI-OS
+## How to Run LLM-OS
 
 ### Quick Start - Real Execution Mode
 ```bash
@@ -66,7 +66,7 @@ claude simulate scenario: "Research task workflow for fine-tuning dataset"
 ### File Structure
 
 ```
-agi/
+llm-os/
 ├── system/
 │   ├── SystemAgent.md              # State machine orchestrator  
 │   ├── SmartLibrary.md             # Component registry with real tools
@@ -87,7 +87,7 @@ agi/
 ├── workspace/                      # Active execution environment
 │   ├── execution_state.md          # Current execution state
 │   └── [Output files from tasks]
-├── AGI-OS-BLUEPRINT.md            # Architecture documentation
+├── LLM-OS-BLUEPRINT.md            # Architecture documentation
 └── CLAUDE.md                      # This configuration file
 ```
 
@@ -144,7 +144,7 @@ agi/
 
 ## Clean Restart
 
-To reset AGI-OS:
+To reset LLM-OS:
 1. Clear `workspace/` directory (keeps execution artifacts)
 2. Reset `system/SmartMemory.md` to empty state (clears learning history)
 3. Archive any valuable execution traces for training data

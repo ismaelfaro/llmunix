@@ -6,7 +6,7 @@
 
 ## Purpose
 
-This agent demonstrates the target behavior for an LLM fine-tuned on AGI-OS execution traces. It shows how the trained model would:
+This agent demonstrates the target behavior for an LLM fine-tuned on LLM-OS execution traces. It shows how the trained model would:
 1. Analyze current context and goals
 2. Identify information gaps requiring external data
 3. Request specific tool calls with structured parameters
@@ -32,7 +32,7 @@ This agent demonstrates the target behavior for an LLM fine-tuned on AGI-OS exec
 
 ### Pattern Matching from Training Data
 
-The agent uses patterns learned from AGI-OS execution traces to make decisions:
+The agent uses patterns learned from LLM-OS execution traces to make decisions:
 
 #### Pattern 1: Information Gap Detection
 ```
@@ -166,7 +166,7 @@ The agent demonstrates how a fine-tuned model would integrate external tool resu
 
 ## Training Pattern Examples
 
-The simulation is based on these real patterns from AGI-OS training data:
+The simulation is based on these real patterns from LLM-OS training data:
 
 ### Web Research Pattern
 ```

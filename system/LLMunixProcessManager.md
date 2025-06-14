@@ -2,7 +2,7 @@
 
 ## Intelligent Process Orchestration System
 
-LLMunix Process Manager provides advanced process management with AI-driven optimization, intelligent scheduling, and execution state tracking integrated with the AGI-OS framework.
+LLMunix Process Manager provides advanced process management with AI-driven optimization, intelligent scheduling, and execution state tracking integrated with the LLM-OS framework.
 
 ### Process Architecture
 

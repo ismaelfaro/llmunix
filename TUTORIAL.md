@@ -18,13 +18,13 @@ This tutorial guides you through using LLM-OS to perform real-world AI research 
 ## Table of Contents
 
 1. [Quick Start: Hugging Face Research](#quick-start-hugging-face-research)
-2. [Understanding AGI-OS Architecture](#understanding-agi-os-architecture)
+2. [Understanding LLM-OS Architecture](#understanding-LLM-OS-architecture)
 3. [Step-by-Step Tutorial](#step-by-step-tutorial)
 4. [Training Data Generation](#training-data-generation)
 5. [Error Recovery and Debugging](#error-recovery-and-debugging)
 6. [Advanced Usage](#advanced-usage)
 
-## Understanding AGI-OS Architecture
+## Understanding LLM-OS Architecture
 
 ### Dual-Mode Operation
 - **EXECUTION MODE**: Uses real Claude Code tools (WebFetch, Read, Write)
@@ -81,7 +81,7 @@ The updated scenario now uses Hugging Face blog for better accessibility:
 
 ### Step 3: Understanding the Real Execution Flow
 
-Watch for these phases in AGI-OS execution:
+Watch for these phases in LLM-OS execution:
 
 #### Phase 1: State Initialization
 ```
@@ -165,7 +165,7 @@ For large training datasets without real tool costs:
 
 ## Error Recovery and Debugging
 
-AGI-OS handles real-world errors gracefully:
+LLM-OS handles real-world errors gracefully:
 
 ### Common Error Scenarios
 - **WebFetch failures**: 403, 404, timeout errors
@@ -207,4 +207,4 @@ grep -A 5 "error" workspace/execution_trace.json
 "Act as SystemAgent and execute: Analyze recent computer vision models on Hugging Face and create an implementation guide"
 ```
 
-You have now learned how to use AGI-OS for real AI research with automatic training data generation!
+You have now learned how to use LLM-OS for real AI research with automatic training data generation!

@@ -2,7 +2,7 @@
 
 This file is the central registry for all components available to the SystemAgent. Components marked with [REAL] use Claude Code's native tools for actual execution.
 
-## AGI-OS Real Components
+## LLM-OS Real Components
 
 ---
 -   **id**: `tool_real_web_fetch_v1`
@@ -60,7 +60,7 @@ This file is the central registry for all components available to the SystemAgen
 -   **side_effects**: "Generates tool requests and demonstrates decision patterns"
 -   **version**: 1.0.0
 -   **tags**: [simulation, fine-tuning, autonomous, state-machine, tool-calling]
--   **applicability_text**: "Use to demonstrate and validate how an LLM trained on AGI-OS execution traces would operate autonomously. Shows target behavior for fine-tuned models that can make external tool calls when needed, similar to Claude Code's capabilities."
+-   **applicability_text**: "Use to demonstrate and validate how an LLM trained on LLM-OS execution traces would operate autonomously. Shows target behavior for fine-tuned models that can make external tool calls when needed, similar to Claude Code's capabilities."
 
 ## Legacy Simulation Components
 

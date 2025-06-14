@@ -74,7 +74,7 @@ LLMunix runs on top of the existing LLM-OS framework. Ensure you have the LLM-OS
 # Navigate to your LLM-OS directory
 cd /path/to/agi
 
-# Verify AGI-OS structure exists
+# Verify LLM-OS structure exists
 ls system/ components/ scenarios/ workspace/
 
 # From Claude Code start LLMunix
@@ -295,7 +295,7 @@ llmunix$ profile --duration 60s --components all
 
 ## Contributing
 
-LLMunix is built on the AGI-OS framework and follows its component-based architecture:
+LLMunix is built on the LLM-OS framework and follows its component-based architecture:
 
 1. **Components**: Add new tools and agents in `components/`
 2. **System Extensions**: Enhance core systems in `system/`
@@ -319,7 +319,7 @@ llmunix$ library register MyNewTool --metadata "description, tags, etc."
 
 ## License
 
-LLMunix is part of the AGI-OS project and follows the same licensing terms.
+LLMunix is part of the LLM-OS project and follows the same licensing terms.
 
 ## Support
 

@@ -1,6 +1,6 @@
 # Claude Code Tool Mapping
 
-This file defines how AGI-OS framework components map to Claude Code's native tools and their real-world characteristics.
+This file defines how LLM-OS framework components map to Claude Code's native tools and their real-world characteristics.
 
 ## Tool Mappings
 
@@ -177,4 +177,4 @@ Each tool call generates training data:
 }
 ```
 
-This mapping enables AGI-OS to make intelligent tool choices based on real performance characteristics while generating high-quality training data.
+This mapping enables LLM-OS to make intelligent tool choices based on real performance characteristics while generating high-quality training data.

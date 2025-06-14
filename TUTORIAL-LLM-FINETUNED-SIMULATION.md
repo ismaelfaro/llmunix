@@ -23,7 +23,7 @@ The simulation shows how an LLM trained on LLM-OS execution traces would operate
 4. **Result Integration**: Processes tool outputs and updates context
 5. **Workflow Continuation**: Proceeds until goal completion
 
-### Key Difference from Current AGI-OS
+### Key Difference from Current LLM-OS
 
 | Current LLM-OS | Simulated Fine-Tuned LLM |
 |----------------|--------------------------|
@@ -275,7 +275,7 @@ A well-trained LLM should achieve:
 
 ### Pattern Recognition
 
-The simulation validates these key patterns from AGI-OS training data:
+The simulation validates these key patterns from LLM-OS training data:
 
 #### Pattern 1: Information Gap Detection
 ```python

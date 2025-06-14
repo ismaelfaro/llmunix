@@ -2,7 +2,7 @@
 
 ## Core Architecture
 
-LLMunix is an AI-powered operating system that dynamically generates tools and commands using the AGI-OS framework structure. The kernel operates as an intelligent orchestrator that can create, execute, and manage system resources on-demand.
+LLMunix is an AI-powered operating system that dynamically generates tools and commands using the LLM-OS framework structure. The kernel operates as an intelligent orchestrator that can create, execute, and manage system resources on-demand.
 
 ### Kernel Components
 
@@ -25,7 +25,7 @@ LLMunix is an AI-powered operating system that dynamically generates tools and c
 - Maintains process hierarchy and dependencies
 
 #### 4. File System Interface
-- Uses AGI-OS folder structure as native file system
+- Uses LLM-OS folder structure as native file system
 - Maps virtual paths to component definitions
 - Provides CRUD operations on system components
 - Maintains version control for component evolution
@@ -116,7 +116,7 @@ LLMunix Kernel
 - **Example**: manage_memory("optimize", "execution_patterns")
 
 ## file_operation(path, operation, data)
-- **Purpose**: File system operations on AGI-OS structure
+- **Purpose**: File system operations on LLM-OS structure
 - **Input**: Virtual path, operation type, data payload
 - **Output**: File operation results and system state
 - **Example**: file_operation("/components/tools/", "create", tool_definition)
@@ -137,7 +137,7 @@ LLMunix Kernel
 - **Error Handling**: Graceful degradation and recovery
 
 #### File System
-- **Virtual File System**: AGI-OS structure as native file system
+- **Virtual File System**: LLM-OS structure as native file system
 - **Component Versioning**: Track evolution of tools and agents
 - **Access Control**: Manage permissions for system components
 - **Backup and Recovery**: Automatic snapshots of critical state

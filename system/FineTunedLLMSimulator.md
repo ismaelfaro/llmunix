@@ -1,6 +1,6 @@
 # Fine-Tuned LLM Simulator
 
-This component simulates how a fine-tuned LLM would operate as a state machine after being trained on AGI-OS execution traces. The simulation demonstrates the target behavior where the LLM can autonomously request external tool calls when needed.
+This component simulates how a fine-tuned LLM would operate as a state machine after being trained on LLM-OS execution traces. The simulation demonstrates the target behavior where the LLM can autonomously request external tool calls when needed.
 
 ## Simulation Architecture
 
@@ -76,7 +76,7 @@ The simulator implements the core decision-making pattern learned from training 
 
 ## Training Data Patterns
 
-The simulation is based on these patterns from AGI-OS training data:
+The simulation is based on these patterns from LLM-OS training data:
 
 ### Pattern 1: Web Data Acquisition
 ```
@@ -124,7 +124,7 @@ Continue: Integrate analysis into workflow
 
 ## Implementation Details
 
-The simulator uses AGI-OS's existing components but adds:
+The simulator uses LLM-OS's existing components but adds:
 - **Decision Logic**: Pattern matching from training data
 - **Tool Request Generation**: Structured output formatting
 - **Context Management**: State tracking across tool calls

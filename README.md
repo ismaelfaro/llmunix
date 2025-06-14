@@ -108,7 +108,7 @@ After a real execution, you'll find:
 3. Update component definitions to leverage new tools
 
 ### Training Pipeline
-AGI-OS automatically generates structured datasets for fine-tuning:
+LLM-OS automatically generates structured datasets for fine-tuning:
 
 ```json
 {

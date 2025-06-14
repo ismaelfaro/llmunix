@@ -6,7 +6,7 @@ Demonstrate how a fine-tuned LLM would operate as an autonomous state machine ag
 
 ## Objective
 
-Show the target behavior for an LLM trained on AGI-OS execution traces by:
+Show the target behavior for an LLM trained on LLM-OS execution traces by:
 1. Simulating autonomous decision-making for external tool calls
 2. Demonstrating context management across tool interactions
 3. Showing state machine progression through workflow steps
@@ -190,4 +190,4 @@ This simulation demonstrates the **target architecture** for a fine-tuned LLM:
 4. **Autonomous Decision Making**: Decides when external calls are needed
 5. **Goal-Oriented Execution**: Continues until objective is achieved
 
-The simulation validates that training data from AGI-OS contains the patterns needed to teach an LLM this autonomous, tool-calling behavior.
+The simulation validates that training data from LLM-OS contains the patterns needed to teach an LLM this autonomous, tool-calling behavior.
