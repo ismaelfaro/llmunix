@@ -16,7 +16,7 @@ Once you're in the Claude Code console, boot the LLMunix operating system:
 boot llmunix
 ```
 
-![LLMunix boot demo](./llmunix.mp4)
+![LLMunix boot demo](llmunix.mp4)
 
 *Watch LLMunix boot demonstration*
 
