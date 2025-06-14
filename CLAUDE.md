@@ -25,11 +25,11 @@ The OS "boots" when Claude reads the markdown system files and begins interpreti
 boot llmunix
 ```
 
-This simple command activates the LLMunix kernel by having Claude read and interpret the markdown system files as a functional operating system.
+This simple command activates the LLMunix kernel by having Claude read and interpret the markdown system files as a functional operating system. **Boot automatically cleans the workspace directory to ensure a fresh execution environment.**
 
 ### Quick Start Commands
 ```bash
-# Boot the OS
+# Boot the OS (cleans workspace automatically)
 boot llmunix
 
 # Execute with real tools and live data  
