@@ -2,7 +2,7 @@
 
 ## Overview
 
-LLM-OS is the evolution of AGI-DAF that uses Claude Code as its runtime engine. Instead of simulation, it performs real operations using Claude Code's native tools while maintaining the document-centric agent framework approach.
+LLM-OS uses Claude Code as its runtime engine. Instead of simulation, it performs real operations using Claude Code's native tools while maintaining the document-centric agent framework approach.
 
 ## Architecture
 

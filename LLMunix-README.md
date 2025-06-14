@@ -2,7 +2,7 @@
 
 # initial prompt
 
-Generate a operating system that use this folder structure to manage all the files and memory, allowing to generate any tool/command on the fly. The operating system name is LLMunix. Be sure that LLMunix command and OS can save the user files in the "workspace" folder.
+Generate a operating system that uses the existing folder structure and files to manage all operations and memory, allowing to generate any tool/command on the fly. The operating system name is LLMunix. Use the current files and folders that are already present - do not create additional files during system loading. LLMunix should save user files in the existing "workspace" folder and leverage existing components from the system/, components/, and scenarios/ directories.
 
 ## Overview
 

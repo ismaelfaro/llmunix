@@ -1,27 +1,42 @@
-# LLM-OS: Claude Code Runtime Configuration
+# LLMunix: Pure Markdown Operating System Framework
 
-This is LLM-OS, an Autonomous Generative Intelligence - Operating System that uses Claude Code as its runtime engine for real tool execution and training data generation.
+This is LLMunix, a Pure Markdown Operating System where everything is either an agent or tool defined in markdown documents. Claude Code serves as the runtime engine interpreting these markdown specifications.
 
-## Project Overview
+## Framework Philosophy: Pure Markdown
 
-LLM-OS is a document-centric agent framework that operates in two modes:
-1. **EXECUTION MODE**: Performs real operations using Claude Code's native tools (WebFetch, Read, Write, Bash, etc.)
-2. **SIMULATION MODE**: Generates training data through simulated tool execution
+**CRITICAL: LLMunix is a PURE MARKDOWN framework. Everything is either an agent or tool defined in markdown documents.**
 
-The framework bridges the gap between simulation and reality by maintaining document-centric agent definitions while executing real tasks through Claude Code's powerful tool ecosystem.
+### Core Principles:
+- **No Code Generation**: System behavior emerges from Claude interpreting markdown documents
+- **Agent/Tool Duality**: Every component is either an agent (decision maker) or tool (executor)
+- **Dynamic Creation**: New tools/agents are created as markdown specifications during runtime
+- **Claude as Kernel**: Claude Code acts as the OS kernel interpreting markdown system definitions
 
-## How to Run LLM-OS
+### Operating Modes:
+1. **EXECUTION MODE**: Real operations using Claude Code's native tools mapped through markdown specs
+2. **SIMULATION MODE**: Training data generation through markdown-defined simulation patterns
 
-### Quick Start - Real Execution Mode
-```bash
-# Execute with real tools and live data
-claude run scenario: "Get live content from https://openai.com/blog and create a research summary"
+The OS "boots" when Claude reads the markdown system files and begins interpreting them as a functional operating system.
+
+## How to Boot LLMunix
+
+### Boot Command
+```
+boot llmunix
 ```
 
-### Quick Start - Training Data Generation Mode  
+This simple command activates the LLMunix kernel by having Claude read and interpret the markdown system files as a functional operating system.
+
+### Quick Start Commands
 ```bash
+# Boot the OS
+boot llmunix
+
+# Execute with real tools and live data  
+llmunix execute: "Get live content from https://openai.com/blog and create a research summary"
+
 # Generate training data through simulation
-claude simulate scenario: "Research task workflow for fine-tuning dataset"
+llmunix simulate: "Research task workflow for fine-tuning dataset"
 ```
 
 ### Running the Real-World Research Scenario
