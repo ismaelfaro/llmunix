@@ -1,6 +1,8 @@
 # Execution State Template
 
-This template is used to create `workspace/execution_state.md` for each task execution.
+**DEPRECATED**: This template has been superseded by the modular state architecture. Use `system/StateDirectoryTemplate.md` instead.
+
+This legacy template is maintained for reference but should not be used for new executions.
 
 ## Template Structure
 

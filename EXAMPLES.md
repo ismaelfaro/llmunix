@@ -1,52 +1,89 @@
-# LLMunix Examples: Powerful Prompt Collection
+# LLMunix Examples: Sentient State & Adaptive Intelligence
 
-This document contains example prompts that demonstrate LLMunix's true power as a Pure Markdown Operating System Framework.
+This document demonstrates LLMunix's revolutionary **Sentient State Architecture** with behavioral constraint evolution, intelligent memory consultation, and adaptive execution patterns.
 
-## System Boot & Initialization
+## System Boot & Sentient State Initialization
 
-### Basic Boot
+### Basic Boot with State Architecture
 ```
 boot llmunix
 ```
+*Automatically initializes modular state architecture in workspace/state/ with behavioral constraints*
 
-### Boot with System Status
+### Boot with Memory Consultation
 ```
-boot llmunix and show me the current system state, available components, and memory contents
+boot llmunix and query memory for patterns from previous executions to optimize initial constraints
 ```
+*System consults memory_log.md for behavioral preferences and successful patterns*
 
-## Real-World Execution Examples
-
-### Live Web Research & Analysis
+### Boot with Constraint Customization
 ```
-Act as SystemAgent and execute: "Research the latest AI safety papers from ArXiv, summarize key findings, and create a structured report with citations saved to workspace/ai_safety_report.md"
+boot llmunix with priority='speed_and_clarity' and active_persona='concise_assistant'
 ```
+*Initializes with specific behavioral modifiers for immediate constraint-aware execution*
 
-### Multi-Source Intelligence Gathering
+## Sentient State & Adaptive Execution Examples
+
+### Constraint-Aware Intelligence Gathering with Graceful Degradation
 ```
 llmunix execute: "Monitor 5 tech news sources (TechCrunch, Ars Technica, Hacker News, MIT Tech Review, Wired), extract trending topics, identify patterns, and generate a weekly intelligence briefing"
 ```
+**Adaptive Behavior Demonstrated:**
+- WebFetch API limitations detected → constraints adapt: error_tolerance='flexible', priority='adaptability'
+- System gracefully degrades to intelligence framework generation
+- Maintains 85% confidence through adaptive constraint evolution
+- Complete behavioral learning recorded in memory_log.md
 
-### Competitive Analysis Pipeline
+### Memory-Driven Research with Historical Pattern Application
 ```
-Act as SystemAgent and execute: "Analyze competitor websites for Company X, extract pricing models, feature comparisons, and market positioning, then generate strategic recommendations"
+llmunix execute: "Research AI safety papers - query memory for past research patterns and apply successful approaches"
 ```
+**QueryMemoryTool Consultation:**
+- Queries: "How were research tasks handled successfully in the past?"
+- Memory provides: Previous summarization strategies, quality metrics, user satisfaction patterns
+- Constraints initialized based on historical success: priority='comprehensiveness', active_persona='detailed_analyst'
 
-## Dynamic Tool Creation Examples
+### Sentiment-Adaptive Urgent Task Processing
+```
+llmunix execute: "URGENT: Analyze this legal document for risks in 10 minutes - deadline critical!"
+```
+**Real-Time Constraint Evolution:**
+- Detects user stress → user_sentiment='stressed'
+- Adapts: priority='speed_and_clarity', active_persona='concise_assistant', human_review_trigger_level='low'
+- Execution style optimizes for time while maintaining accuracy
+- Post-completion: user_sentiment evolves to 'relieved'
 
-### Custom API Integration
-```
-llmunix execute: "Create a tool to interact with Slack API, then use it to analyze team communication patterns and generate productivity insights"
-```
+## Memory-Driven Tool Evolution Examples
 
-### Domain-Specific Processor
+### Adaptive API Integration with Memory Learning
 ```
-Act as SystemAgent and create a specialized tool for processing scientific papers, then use it to analyze recent publications on quantum computing and extract key breakthroughs
+llmunix execute: "Create a Slack analysis tool, then use it for team productivity insights"
 ```
+**Memory Integration Pattern:**
+- QueryMemoryTool: "What were successful patterns for API integration tools?"
+- Memory recommends: Error handling strategies, rate limiting approaches, confidence scoring
+- Tool creation incorporates past learnings for improved reliability
+- Experience logged: Tool performance, user satisfaction, optimization opportunities
 
-### Data Pipeline Generator
+### Constraint-Aware Specialized Tool Creation
 ```
-llmunix execute: "Generate a data processing pipeline that fetches stock data, analyzes trends, and creates automated trading signals - save all components for reuse"
+llmunix execute: "Create a scientific paper processor for quantum computing analysis"
 ```
+**Behavioral Constraint Application:**
+- Memory consultation reveals: Past technical tools benefited from detailed_analyst persona
+- Constraints set: active_persona='detailed_analyst', priority='quality', error_tolerance='strict'
+- Tool creation adapts to constraints: Comprehensive validation, detailed output formatting
+- Memory update: Technical domain patterns, constraint effectiveness
+
+### Error-Resilient Pipeline with Memory Recovery
+```
+llmunix execute: "Generate stock data analysis pipeline with automated trading signals"
+```
+**Memory-Guided Error Recovery:**
+- QueryMemoryTool: "How were financial data failures handled in past executions?"
+- Memory provides: Fallback data sources, validation strategies, confidence thresholds
+- Pipeline incorporates memory-recommended resilience patterns
+- Real-time constraint adaptation based on data quality and market volatility
 
 ## Advanced Multi-Agent Workflows
 
@@ -65,39 +102,70 @@ llmunix execute: "Set up a content pipeline with agents for topic research, outl
 Act as SystemAgent and deploy: "Create a QA team of agents to test a web application - one for functionality testing, one for performance analysis, one for security assessment, and one for user experience evaluation"
 ```
 
-## State Management & Memory Examples
+## Advanced State Management & Memory Intelligence
 
-### Resumable Long-Running Tasks
+### Modular State with Atomic Constraint Evolution
 ```
-llmunix execute: "Start a comprehensive market research project on electric vehicles. If interrupted, save state and resume from the exact point of interruption"
+llmunix execute: "Comprehensive electric vehicle market research - enable modular state management"
 ```
+**Modular State Architecture:**
+- workspace/state/plan.md: Research phases with adaptive milestones
+- workspace/state/constraints.md: Evolving behavioral modifiers based on research complexity
+- workspace/state/context.md: Accumulating market insights and pattern recognition
+- workspace/state/history.md: Complete audit trail with constraint adaptation events
+- Mid-execution constraint evolution: As data complexity increases, priority shifts to 'comprehensiveness'
 
-### Learning from Experience
+### Memory-Driven Learning with Behavioral Pattern Analysis
 ```
-Act as SystemAgent and execute: "Perform sentiment analysis on social media data, learn from the results, and improve the analysis methodology for future tasks"
+llmunix execute: "Social media sentiment analysis with memory-driven methodology improvement"
 ```
+**Intelligent Memory Learning:**
+- MemoryAnalysisAgent queries: Historical sentiment analysis approaches, accuracy patterns, user feedback
+- Identifies: Previous constraint combinations that led to highest user satisfaction
+- Applies: Proven behavioral patterns while adapting to current context
+- Records: New insights about constraint-accuracy relationships for future optimization
 
-### Adaptive Workflow Optimization
+### Constraint-Aware Workflow Evolution
 ```
-llmunix execute: "Optimize a data processing workflow by analyzing execution patterns, identifying bottlenecks, and automatically restructuring the pipeline for better performance"
+llmunix execute: "Optimize data processing workflow using memory patterns and constraint adaptation"
 ```
+**Sentient State Optimization:**
+- Memory consultation: "What constraint patterns led to successful workflow optimizations?"
+- Constraint initialization: Based on historical optimization success patterns
+- Real-time adaptation: Constraints evolve as bottlenecks are identified
+- Performance feedback loop: Constraint effectiveness metrics update memory database
 
-## Training Data Generation Examples
+## Behavioral Learning & Training Data Examples
 
-### Simulation-Based Learning
+### Constraint-Aware Customer Service Training
 ```
-llmunix simulate: "Generate training data for customer service scenarios by simulating various customer interactions, agent responses, and resolution outcomes"
+llmunix simulate: "Generate customer service training data with behavioral constraint adaptation patterns"
 ```
+**Behavioral Pattern Generation:**
+- Simulates constraint evolution: user_sentiment changes from 'frustrated' to 'satisfied'
+- Training data includes: Constraint adaptation triggers, response style modifications, escalation patterns
+- Memory integration: How constraint changes correlate with resolution success rates
+- Output: Complete behavioral adaptation sequences for fine-tuning autonomous agents
 
-### Error Handling Training
+### Memory-Driven Error Recovery Training
 ```
-Act as SystemAgent in SIMULATION MODE and generate: "Training examples for handling API failures, network timeouts, and data corruption scenarios in automated workflows"
+llmunix simulate: "API failure scenarios with memory-guided recovery pattern generation"
 ```
+**Intelligent Recovery Simulation:**
+- QueryMemoryTool integration: Historical recovery strategies and their success rates
+- Constraint adaptation: How error_tolerance and priority shift during failure scenarios
+- Training patterns: Memory consultation → strategy selection → constraint evolution → execution adaptation
+- Learning data: Complete error-to-recovery workflows with behavioral context
 
-### Decision-Making Datasets
+### Sentient State Decision-Making Datasets
 ```
-llmunix simulate: "Create decision-making training data by simulating project management scenarios with varying constraints, stakeholder requirements, and resource limitations"
+llmunix simulate: "Project management scenarios with dynamic constraint evolution training data"
 ```
+**Advanced Behavioral Simulation:**
+- Constraint evolution patterns: How priority, user_sentiment, and active_persona change with project phases
+- Memory consultation simulation: How historical project patterns influence current decision-making
+- Training complexity: Multi-dimensional constraint interactions and their outcomes
+- Dataset richness: Complete sentient state transitions with performance correlation data
 
 ## Complex Integration Examples
 
@@ -218,21 +286,57 @@ Act as SystemAgent and automate: "Complete business operations including lead ge
 llmunix execute: "Simulate a complete software development team with product owner, developers, testers, and DevOps engineers working on a real project"
 ```
 
-## Usage Tips
+## Sentient State Mastery Tips
 
-1. **Start Simple**: Begin with basic execution commands before moving to complex workflows
-2. **Use State Management**: For complex tasks, let LLMunix save state and resume if needed
-3. **Leverage Memory**: Reference previous executions to build upon past learnings
-4. **Mix Real & Simulation**: Use real execution for production work, simulation for training data
-5. **Monitor Performance**: Track costs and execution time for optimization opportunities
-6. **Build Libraries**: Save successful tool/agent definitions for reuse across projects
+### Constraint Optimization
+1. **Initialize with Memory**: Always query memory for similar task patterns before execution
+2. **Monitor Sentiment Evolution**: Watch how your feedback influences system behavioral adaptation
+3. **Leverage Constraint Inheritance**: Successful constraint patterns are applied to similar future tasks
+4. **Embrace Adaptive Execution**: Allow system to evolve constraints based on execution events
 
-## Command Patterns
+### Memory Intelligence Utilization
+5. **Pattern Recognition**: Use MemoryAnalysisAgent for complex queries about historical success patterns
+6. **Behavioral Learning**: System learns your preferences and adapts communication style accordingly
+7. **Error Recovery Wisdom**: Memory provides sophisticated recovery strategies from past failure patterns
+8. **Confidence Calibration**: Historical accuracy helps system calibrate confidence and escalation thresholds
 
-- `llmunix execute:` - Real-world execution with live tools
-- `llmunix simulate:` - Training data generation mode  
-- `Act as SystemAgent and [action]:` - Direct agent orchestration
-- `boot llmunix` - System initialization
-- State-aware commands automatically save/resume execution progress
+### Modular State Mastery
+9. **Atomic Updates**: Leverage modular state for precise execution tracking and resumability
+10. **Constraint Awareness**: Monitor workspace/state/constraints.md to understand current behavioral context
+11. **Context Accumulation**: Use workspace/state/context.md for knowledge building across execution steps
+12. **Full Traceability**: Complete execution history enables sophisticated debugging and optimization
 
-Remember: LLMunix's power comes from treating everything as markdown-defined components that Claude interprets as a functional operating system. The system grows more capable as it learns from each execution.
+## Advanced Command Patterns
+
+### Sentient State Commands
+- `llmunix execute:` - Constraint-aware execution with adaptive behavioral modification
+- `llmunix execute with priority='speed_and_clarity':` - Explicit constraint initialization
+- `llmunix execute and query memory for [pattern]:` - Memory-driven execution strategy
+- `llmunix execute with sentiment tracking:` - Enhanced user sentiment detection and adaptation
+
+### Memory Intelligence Commands  
+- `query memory for: "How were [task type] handled successfully?"` - Pattern consultation
+- `analyze memory patterns for constraint optimization` - Behavioral learning analysis
+- `apply memory-recommended constraints for [task type]` - Historical pattern application
+- `update memory with current execution insights` - Learning integration
+
+### Adaptive Execution Commands
+- `boot llmunix with adaptive constraints` - Dynamic behavioral initialization
+- `resume execution from workspace/state/ with constraint evolution` - Stateful resumption
+- `execute with graceful degradation for external tool failures` - Resilient execution
+- `monitor constraint evolution during execution` - Real-time behavioral adaptation tracking
+
+### Training & Simulation Commands
+- `llmunix simulate: [scenario] with behavioral pattern generation` - Training data with constraint context
+- `generate training data from memory experiences` - Historical execution learning datasets
+- `simulate constraint adaptation patterns for [scenario type]` - Behavioral adaptation training
+
+## The Sentient State Advantage
+
+LLMunix's revolutionary approach combines:
+- **Behavioral Constraint Evolution**: System adapts its behavior based on context, user feedback, and execution events
+- **Intelligent Memory Integration**: Historical experiences actively inform current decision-making
+- **Modular State Architecture**: Atomic state transitions enable precise control and resumability
+- **Adaptive Error Recovery**: Memory-guided strategies maintain intelligence value despite external failures
+
+Every execution contributes to the system's behavioral intelligence, creating a continuously improving autonomous agent foundation.

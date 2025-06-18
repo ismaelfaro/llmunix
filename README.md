@@ -22,102 +22,191 @@ boot llmunix
 
 ### Example Commands
 
-**Real-world research task:**
+**Constraint-aware intelligence gathering:**
 ```bash
-# Act as SystemAgent and execute the RealWorld_Research_Task scenario in EXECUTION MODE
-llmunix execute: "Get live content from https://huggingface.co/blog and create a research summary"
+llmunix execute: "Monitor 5 tech news sources, extract trending topics, and generate intelligence briefing"
+# System adapts constraints based on API limitations, maintains intelligence value through graceful degradation
 ```
 
-**Custom task execution:**
-```bash  
-# Act as SystemAgent and execute: [your goal] using real tools
-llmunix execute: "Analyze all markdown components in this system and create an architecture overview"
+**Memory-driven task execution:**
+```bash
+llmunix execute: "Research AI safety papers - query memory for past research patterns and apply successful approaches"
+# QueryMemoryTool consults past experiences, MemoryAnalysisAgent recommends optimal strategy
+```
+
+**Adaptive execution with sentiment tracking:**
+```bash
+llmunix execute: "Urgent: analyze this legal document for risks in 10 minutes"
+# System detects urgency, adapts constraints: priority='speed_and_clarity', persona='concise_assistant'
 ```
 
 ## What is LLMunix?
 
-LLMunix is an AI-powered operating system that:
+LLMunix is a revolutionary AI-powered operating system that implements the **Sentient State Principle** - where system behavior dynamically adapts through evolving behavioral constraints:
 
-- **Uses Pure Markdown**: All system components are markdown files interpreted by Claude
-- **Generates Tools Dynamically**: Creates new tools on-demand based on natural language requests  
-- **Leverages Real Tools**: Maps to Claude Code's native tools (WebFetch, FileSystem, Bash, etc.)
-- **Learns from Experience**: Smart memory system tracks patterns and optimizes performance
-- **Manages State**: Persistent execution state with resumable workflows
+- **Pure Markdown Architecture**: All system components are markdown files interpreted by Claude as a functional OS
+- **Sentient State Management**: Behavioral constraints (user sentiment, priorities, error tolerance) evolve during execution
+- **Intelligent Memory System**: Structured, queryable experience database with pattern recognition and adaptive learning
+- **Modular State Architecture**: Specialized state files (plan.md, context.md, constraints.md) for atomic updates
+- **Real Tool Integration**: Maps to Claude Code's native tools with graceful degradation and error recovery
+- **Adaptive Execution**: Dynamic constraint evolution based on user feedback, errors, and execution context
 
-### Core Architecture
+### Sentient State Architecture
 
 ```
 llmunix/
-├── system/           # Core OS components (Kernel, Memory, Shell, etc.)
-├── components/       # Available tools and agents
-│   ├── tools/        # Executable tools (WebFetch, FileSystem, etc.) 
-│   └── agents/       # Decision-making agents (Summarization, etc.)
-├── scenarios/        # Pre-defined task workflows
-└── workspace/        # Active execution environment and user files
+├── system/
+│   ├── SystemAgent.md              # Sentient state machine orchestrator
+│   ├── memory_log.md               # Structured, queryable experience database
+│   ├── StateDirectoryTemplate.md   # Modular state architecture template
+│   └── ClaudeCodeToolMap.md        # Real tool mappings with error handling
+├── components/
+│   ├── tools/
+│   │   ├── RealWebFetchTool.md     # Live web content with constraint-aware execution
+│   │   ├── QueryMemoryTool.md      # Intelligent memory consultation
+│   │   └── RealFileSystemTool.md   # File operations with behavioral adaptation
+│   └── agents/
+│       ├── RealSummarizationAgent.md  # Content analysis with confidence scoring
+│       └── MemoryAnalysisAgent.md     # Pattern recognition across experiences
+├── scenarios/           # Real-world task workflows with adaptive execution
+└── workspace/
+    ├── state/           # Modular execution state
+    │   ├── plan.md      # Execution steps and metadata
+    │   ├── context.md   # Knowledge accumulation
+    │   ├── variables.json # Structured data passing
+    │   ├── history.md   # Execution log
+    │   └── constraints.md # Behavioral modifiers (sentient state)
+    └── [Output files]   # Task results and artifacts
 ```
 
-### Key Features
+### Revolutionary Features
 
-- **Natural Language Commands**: Interact using plain English instead of complex syntax
-- **Dynamic Tool Generation**: Creates specialized tools for any task in seconds
-- **Smart Memory**: System learns from your patterns and suggests optimizations
-- **Real Tool Integration**: Uses actual web fetching, file operations, and system commands
-- **State Machine Execution**: Atomic operations with error recovery and resumable workflows
+#### Sentient State Management
+- **Behavioral Constraints**: Dynamic user sentiment tracking, priority adaptation, error tolerance management
+- **Constraint Evolution**: Real-time behavioral modification based on execution events and user feedback
+- **Adaptive Personas**: Communication style switching (concise assistant, detailed analyst, proactive collaborator)
+- **Memory-Driven Initialization**: Past experiences inform initial constraint settings for similar tasks
+
+#### Intelligent Memory System
+- **Structured Experience Database**: YAML frontmatter with qualitative insights for intelligent querying
+- **QueryMemoryTool**: Natural language interface to historical experience patterns
+- **MemoryAnalysisAgent**: Advanced pattern recognition and recommendation engine
+- **Behavioral Learning**: User sentiment evolution and constraint preference tracking
+
+#### Modular State Architecture
+- **Atomic State Transitions**: Independent updates to plan, context, variables, history, and constraints
+- **Resumable Execution**: Full context preservation with mid-task pause/resume capabilities
+- **Constraint-Aware Planning**: Historical patterns guide component selection and execution strategy
 
 ### Operating Modes
 
-1. **EXECUTION MODE**: Real operations using Claude Code's native tools
-2. **SIMULATION MODE**: Training data generation through simulation patterns
+1. **EXECUTION MODE**: Real operations with adaptive constraint management and intelligent error recovery
+2. **SIMULATION MODE**: Training data generation with behavioral pattern simulation for agent fine-tuning
 
-## Key Capabilities
+### Sentient State Principles
 
-- **WebFetch**: Live web content retrieval with error handling
-- **FileSystem**: Real file operations (Read/Write/Search/List)  
-- **Bash**: System command execution for complex tasks
-- **Task**: Parallel sub-task execution for complex workflows
-- **State Management**: Execution state persisted with full audit trail
-- **Cost Tracking**: Real-time monitoring of execution costs
-- **Training Data**: Automatic collection from real executions for AI improvement
+LLMunix operates on the **Sentient State Principle**: system state encompasses not just data and decisions, but **evolving behavioral constraints** that actively modify decision-making processes for superior adaptive behavior.
 
-## Summary of LLMunix Features
+#### Key Behavioral Modifiers:
+- **user_sentiment**: Detected emotional state influencing interaction style (neutral, pleased, frustrated, stressed)
+- **priority**: Execution focus (speed_and_clarity, comprehensiveness, cost_efficiency, quality)
+- **active_persona**: Communication style (concise_assistant, detailed_analyst, proactive_collaborator)
+- **error_tolerance**: Risk acceptance level (strict, moderate, flexible)
+- **human_review_trigger_level**: Threshold for seeking guidance (low, medium, high)
 
-Based on the comprehensive documentation, LLMunix offers:
+#### Constraint Adaptation Examples:
+- **User Frustration Detected** → priority="speed_and_clarity", human_review_trigger_level="low"
+- **Positive Feedback Received** → user_sentiment="pleased", active_persona="proactive_collaborator"
+- **Repeated Failures** → error_tolerance="strict", memory consultation for recovery strategies
+- **Cost Exceeding Budget** → priority="cost_efficiency", prefer lower-cost tool alternatives
 
-**AI-Powered Command Interface**
-- Natural language command interpretation instead of traditional CLI syntax
-- Intent recognition that understands what you want to accomplish
-- Context-aware behavior that adapts to your workspace and patterns
-- Smart suggestions and workflow automation
+## Advanced Capabilities
 
-**Dynamic Tool Ecosystem**  
-- On-demand tool creation for any task within seconds
-- Component-based architecture with rich metadata management
-- Real-time optimization and performance monitoring
-- Tool evolution that improves automatically based on usage
+### Real Tool Integration with Adaptive Behavior
+- **RealWebFetchTool**: Live content retrieval with constraint-aware error handling and graceful degradation
+- **RealFileSystemTool**: File operations with behavioral adaptation based on user preferences
+- **RealSummarizationAgent**: Content analysis with confidence scoring and memory-recommended approaches
+- **QueryMemoryTool**: Intelligent consultation of historical experiences for decision-making
 
-**Advanced Memory Management**
-- Adaptive learning from user patterns and preferences
-- Predictive caching and resource preloading  
-- Pattern recognition for workflow optimization
-- Continuous performance optimization with minimal overhead
+### Sentient State Features
+- **Dynamic Constraint Evolution**: Behavioral modifiers adapt based on user sentiment, errors, and context
+- **Intelligent Error Recovery**: Memory-guided recovery strategies from past failure patterns
+- **Adaptive Execution Style**: Priority shifting (speed vs comprehensiveness) based on user needs
+- **Human-in-the-Loop Integration**: Context-aware escalation based on confidence and constraint settings
 
-**Intelligent File System**
-- Virtual directories (bin/, proc/, dev/) with real functionality
-- Executable markdown components as programs
-- Semantic search by intent rather than just name patterns
-- Automatic file organization based on usage and relationships
+### Advanced Learning Pipeline
+- **Structured Memory Log**: Complete execution traces with behavioral context and learning insights
+- **Pattern Recognition**: Cross-execution analysis for workflow optimization and error prevention
+- **Training Data Generation**: Real execution experiences converted to fine-tuning datasets
+- **Performance Optimization**: Cost tracking, latency analysis, and success rate monitoring
 
-**Process Intelligence**
-- Resource optimization for CPU, memory, and I/O
-- Error prevention and prediction of failure scenarios
-- Performance monitoring with real-time analytics
-- Automatic error recovery and process management
+## Breakthrough Capabilities: Beyond Traditional AI Systems
 
-**Security & Safety**
-- Sandboxed execution environments for all tools
-- Granular permission management and access control
-- Complete audit trails of all system operations
-- Secure-by-default configurations and safe operation modes
+### Sentient State Management
+- **Emotional Intelligence**: Real-time user sentiment detection with adaptive response strategies
+- **Behavioral Evolution**: Constraints dynamically modify based on execution events and user feedback
+- **Memory-Driven Adaptation**: Historical patterns inform current behavioral settings and decision-making
+- **Context-Aware Personas**: Communication and execution style adapts to optimize user experience
+
+### Intelligent Memory Architecture
+- **Structured Experience Database**: YAML frontmatter enables complex querying of past executions
+- **Pattern Recognition Engine**: Cross-execution analysis identifies successful approaches and failure patterns
+- **Adaptive Recommendations**: Memory provides actionable insights for current task optimization
+- **Behavioral Learning Database**: User preference evolution and constraint effectiveness tracking
+
+### Modular Execution Framework
+- **Atomic State Transitions**: Independent file updates (plan.md, context.md, constraints.md) for precision
+- **Resumable Workflows**: Full context preservation enables pause/resume at any execution point
+- **Constraint-Aware Planning**: Behavioral modifiers influence component selection and execution strategy
+- **Graceful Degradation**: Intelligent fallback strategies maintain value when external dependencies fail
+
+### Advanced Error Intelligence
+- **Memory-Guided Recovery**: QueryMemoryTool provides historical error recovery strategies
+- **Predictive Failure Prevention**: Pattern analysis prevents repeated failure scenarios
+- **Adaptive Error Tolerance**: Risk acceptance adjusts based on task criticality and user preferences
+- **Human-in-the-Loop Optimization**: Context-aware escalation based on confidence and constraint settings
+
+### Real-World Integration
+- **Production-Ready Execution**: Real Claude Code tool integration with enterprise-grade error handling
+- **Cost-Aware Operations**: Intelligent tool selection balancing performance, cost, and quality constraints
+- **Training Data Generation**: Complete execution traces become fine-tuning datasets for autonomous agents
+- **Security & Compliance**: Complete audit trails with behavioral context for enterprise deployment
+
+## Quick Start Guide
+
+### 1. Boot LLMunix
+```bash
+boot llmunix
+```
+
+### 2. Execute with Constraint Awareness
+```bash
+llmunix execute: "[your goal here]"
+# System automatically:
+# - Initializes modular state architecture (workspace/state/)
+# - Consults memory for similar task patterns
+# - Adapts behavioral constraints based on context
+# - Executes with real tools and adaptive error recovery
+# - Records complete experience for future learning
+```
+
+### 3. Monitor Adaptive Behavior
+Watch as LLMunix:
+- Detects your sentiment and adapts communication style
+- Evolves constraints based on execution events
+- Learns from memory to optimize current task approach
+- Maintains intelligence value despite external tool limitations
+
+---
+
+## Implementation Status: Production Ready
+
+✅ **Sentient State Architecture**: Fully implemented with behavioral constraint evolution  
+✅ **Modular State Management**: Complete workspace/state/ directory structure  
+✅ **Intelligent Memory System**: Structured experience database with QueryMemoryTool  
+✅ **Real Tool Integration**: Production Claude Code tool mappings with error recovery  
+✅ **Adaptive Execution**: Dynamic constraint modification based on user feedback and events  
+✅ **Training Data Pipeline**: Automatic generation from real execution experiences  
 
 ---
 
@@ -125,4 +214,4 @@ Based on the comprehensive documentation, LLMunix offers:
 
 *   Original Concept Contributors: [Matias Molinas](https://github.com/matiasmolinas) and [Ismael Faro](https://github.com/ismaelfaro).
 
-*LLM-OS: Where simulation meets reality, and training data drives the future of autonomous AI.*
+*LLMunix: Where Sentient State meets Intelligent Memory, creating the foundation for truly adaptive autonomous AI.*
