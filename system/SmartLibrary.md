@@ -49,6 +49,36 @@ This file is the central registry for all components available to the SystemAgen
 -   **applicability_text**: "Use for comprehensive text summarization from files, URLs, or direct text input. Supports multiple output formats (JSON, Markdown, Plain) and quality metrics. Ideal for document analysis, content extraction, and report generation."
 
 ---
+-   **id**: `agent_memory_analysis_v1`
+-   **name**: MemoryAnalysisAgent [REAL]
+-   **file_path**: `components/agents/MemoryAnalysisAgent.md`
+-   **record_type**: REAL_AGENT
+-   **claude_tool**: Read, Grep, Bash
+-   **domain**: memory_management
+-   **description**: Intelligent memory querying agent that analyzes historical task executions to provide insights and recommendations.
+-   **cost**: low ($0.01-0.03 per query)
+-   **latency**: medium (2-5 seconds)
+-   **side_effects**: "None - read-only memory analysis"
+-   **version**: 1.0.0
+-   **tags**: [memory, analysis, learning, patterns, real, claude-code]
+-   **applicability_text**: "Use for learning from past experiences, identifying successful patterns, detecting failure modes, and generating behavioral recommendations. Essential for adaptive execution and continuous improvement."
+
+---
+-   **id**: `tool_query_memory_v1`
+-   **name**: QueryMemoryTool [REAL]
+-   **file_path**: `components/tools/QueryMemoryTool.md`
+-   **record_type**: REAL_TOOL
+-   **claude_tool**: Read, Grep, Bash
+-   **domain**: memory_management
+-   **description**: Bridge tool that enables SystemAgent to query memory through MemoryAnalysisAgent with standardized interface.
+-   **cost**: low ($0.01-0.03 per query)
+-   **latency**: medium (2-5 seconds)
+-   **side_effects**: "May cache query results temporarily"
+-   **version**: 1.0.0
+-   **tags**: [memory, query, bridge, learning, real, claude-code]
+-   **applicability_text**: "Use during planning and error recovery to consult past experiences. Provides actionable insights for constraint adaptation, component selection, and strategy optimization based on historical performance."
+
+---
 -   **id**: `agent_simulated_finetuned_v1`
 -   **name**: SimulatedFineTunedAgent [SIMULATION]
 -   **file_path**: `components/agents/SimulatedFineTunedAgent.md`
