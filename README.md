@@ -42,10 +42,10 @@ llmunix execute: "Urgent: analyze this legal document for risks in 10 minutes"
 
 ## What is LLMunix?
 
-LLMunix is a revolutionary AI-powered operating system that implements the **Sentient State Principle** - where system behavior dynamically adapts through evolving behavioral constraints:
+LLMunix is an AI-powered operating system that implements **Adaptive Behavior Management** - where system behavior dynamically adapts through evolving behavioral constraints:
 
 - **Pure Markdown Architecture**: All system components are markdown files interpreted by Claude as a functional OS
-- **Sentient State Management**: Behavioral constraints (user sentiment, priorities, error tolerance) evolve during execution
+- **Adaptive State Management**: Behavioral constraints (user sentiment, priorities, error tolerance) evolve during execution
 - **Intelligent Memory System**: Structured, queryable experience database with pattern recognition and adaptive learning
 - **Modular State Architecture**: Specialized state files (plan.md, context.md, constraints.md) for atomic updates
 - **Real Tool Integration**: Maps to Claude Code's native tools with graceful degradation and error recovery
@@ -79,9 +79,9 @@ llmunix/
     └── [Output files]   # Task results and artifacts
 ```
 
-### Revolutionary Features
+### Advanced Features
 
-#### Sentient State Management
+#### Adaptive State Management
 - **Behavioral Constraints**: Dynamic user sentiment tracking, priority adaptation, error tolerance management
 - **Constraint Evolution**: Real-time behavioral modification based on execution events and user feedback
 - **Adaptive Personas**: Communication style switching (concise assistant, detailed analyst, proactive collaborator)
@@ -103,9 +103,9 @@ llmunix/
 1. **EXECUTION MODE**: Real operations with adaptive constraint management and intelligent error recovery
 2. **SIMULATION MODE**: Training data generation with behavioral pattern simulation for agent fine-tuning
 
-### Sentient State Principles
+### Adaptive Behavior Principles
 
-LLMunix operates on the **Sentient State Principle**: system state encompasses not just data and decisions, but **evolving behavioral constraints** that actively modify decision-making processes for superior adaptive behavior.
+LLMunix operates on **Adaptive Behavior Management**: system state encompasses not just data and decisions, but **evolving behavioral constraints** that actively modify decision-making processes for intelligent adaptive behavior.
 
 #### Key Behavioral Modifiers:
 - **user_sentiment**: Detected emotional state influencing interaction style (neutral, pleased, frustrated, stressed)
@@ -140,9 +140,9 @@ LLMunix operates on the **Sentient State Principle**: system state encompasses n
 - **Training Data Generation**: Real execution experiences converted to fine-tuning datasets
 - **Performance Optimization**: Cost tracking, latency analysis, and success rate monitoring
 
-## Breakthrough Capabilities: Beyond Traditional AI Systems
+## Advanced Capabilities: Intelligent Adaptive Systems
 
-### Sentient State Management
+### Adaptive State Management
 - **Emotional Intelligence**: Real-time user sentiment detection with adaptive response strategies
 - **Behavioral Evolution**: Constraints dynamically modify based on execution events and user feedback
 - **Memory-Driven Adaptation**: Historical patterns inform current behavioral settings and decision-making
@@ -214,4 +214,4 @@ Watch as LLMunix:
 
 *   Original Concept Contributors: [Matias Molinas](https://github.com/matiasmolinas) and [Ismael Faro](https://github.com/ismaelfaro).
 
-*LLMunix: Where Sentient State meets Intelligent Memory, creating the foundation for truly adaptive autonomous AI.*
+*LLMunix: Where Adaptive Behavior meets Intelligent Memory, creating the foundation for truly intelligent autonomous AI.*
