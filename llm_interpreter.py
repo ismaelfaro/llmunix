@@ -333,7 +333,7 @@ class LLMunixInterpreter:
         print(f"📋 Environment documentation created: {env_file}")
     
     def _delegate_to_system_agent(self):
-        """Delegate execution to SystemAgent.md"""
+        """Delegate execution to SystemAgent.md with real tool execution loop"""
         print("🧠 Delegating to SystemAgent.md...")
         
         # Read SystemAgent specification
@@ -343,43 +343,42 @@ class LLMunixInterpreter:
         
         system_agent_spec = system_agent_path.read_text(encoding='utf-8')
         
-        # Build execution context for SystemAgent
-        environment_context = self._build_environment_context()
-        available_tools = self._get_available_cli_tools()
+        # Initialize execution context
+        execution_context = self._build_full_execution_context()
         
-        # Create execution prompt that delegates to SystemAgent
-        prompt = f"""You are acting as the SystemAgent from this specification:
-
-{system_agent_spec}
-
-EXECUTION CONTEXT:
-- Goal: {self.context.goal}
-- Workspace: {self.workspace_dir}
-- State directory: {self.state_dir}
-- Container: {self.context.container_name if self.context.container_name else "None (host system)"}
-
-ENVIRONMENT:
-{environment_context}
-
-AVAILABLE CLI TOOLS:
-{available_tools}
-
-WORKSPACE STATE FILES:
-{self._list_workspace_files()}
-
-Execute the goal by following the SystemAgent specification. You have access to:
-1. All CLI tools available in the environment
-2. File operations in the workspace
-3. Container commands if available
-4. The modular state management system
-
-Begin execution according to the SystemAgent specification."""
-
-        # Execute via SystemAgent
-        response = self._call_llm(prompt, max_tokens=3000)
+        # Start agentic execution loop
+        max_iterations = 10
+        iteration = 0
         
-        # Log the SystemAgent response
-        self._log_execution_step("SystemAgent Execution", response)
+        while iteration < max_iterations:
+            iteration += 1
+            print(f"🔄 Execution iteration {iteration}")
+            
+            # Build current prompt with context
+            prompt = self._build_iteration_prompt(system_agent_spec, execution_context, iteration)
+            
+            # Get LLM response
+            response = self._call_llm(prompt, max_tokens=2000)
+            
+            # Log the response
+            self._log_execution_step(f"SystemAgent Iteration {iteration}", response)
+            
+            # Parse and execute any tool calls from the response
+            tool_results = self._extract_and_execute_tools(response)
+            
+            # Update execution context with results
+            execution_context = self._update_execution_context(execution_context, response, tool_results)
+            
+            # Check if execution is complete
+            if self._is_execution_complete(response, tool_results):
+                print("✅ Execution completed successfully")
+                break
+            
+            # Update state files
+            self._update_state_with_context(execution_context)
+        
+        if iteration >= max_iterations:
+            print("⚠️ Maximum iterations reached")
         
         print("✅ Execution delegated to SystemAgent")
     
@@ -402,6 +401,355 @@ Begin execution according to the SystemAgent specification."""
                 files.append(str(rel_path))
         return "\n".join(files) if files else "No files in workspace"
     
+    def _build_full_execution_context(self) -> Dict[str, Any]:
+        """Build complete execution context for agentic loop"""
+        return {
+            'goal': self.context.goal,
+            'workspace_dir': str(self.workspace_dir),
+            'state_dir': str(self.state_dir),
+            'container_name': self.context.container_name,
+            'environment_info': self.context.environment_info or {},
+            'execution_history': [],
+            'tool_results': [],
+            'current_state': 'initialized'
+        }
+    
+    def _build_iteration_prompt(self, system_agent_spec: str, execution_context: Dict, iteration: int) -> str:
+        """Build prompt for current iteration with full context"""
+        
+        # Get current workspace state
+        workspace_files = self._list_workspace_files()
+        available_tools = self._get_available_cli_tools()
+        
+        prompt = f"""You are acting as the SystemAgent from this specification:
+
+{system_agent_spec}
+
+EXECUTION CONTEXT (Iteration {iteration}):
+- Goal: {execution_context['goal']}
+- Workspace: {execution_context['workspace_dir']}
+- State directory: {execution_context['state_dir']}
+- Container: {execution_context['container_name'] or "None (host system)"}
+- Current state: {execution_context['current_state']}
+
+ENVIRONMENT:
+{self._format_environment_info(execution_context['environment_info'])}
+
+AVAILABLE CLI TOOLS:
+{available_tools}
+
+WORKSPACE STATE FILES:
+{workspace_files}
+
+EXECUTION HISTORY:
+{self._format_execution_history(execution_context['execution_history'])}
+
+TOOL RESULTS FROM PREVIOUS STEPS:
+{self._format_tool_results(execution_context['tool_results'])}
+
+INSTRUCTIONS:
+You can execute real tools and commands. When you need to use a tool, format your response like this:
+
+TOOL_CALL: command_name
+PARAMETERS: parameter1=value1, parameter2=value2
+REASONING: Why you need this tool
+
+Available tool patterns:
+- TOOL_CALL: curl
+  PARAMETERS: url=https://example.com, output_file=/workspace/content.html
+  REASONING: Fetch web content
+
+- TOOL_CALL: python3
+  PARAMETERS: script=/workspace/process.py, args=input.txt output.txt
+  REASONING: Process downloaded content
+
+- TOOL_CALL: cat
+  PARAMETERS: file=/workspace/file.txt
+  REASONING: Read file contents
+
+Continue execution according to the SystemAgent specification. If you need to execute tools, use the TOOL_CALL format above."""
+
+        return prompt
+    
+    def _extract_and_execute_tools(self, response: str) -> List[Dict[str, Any]]:
+        """Extract and execute tool calls from LLM response"""
+        tool_results = []
+        
+        # Parse tool calls from response
+        lines = response.split('\n')
+        i = 0
+        
+        while i < len(lines):
+            if lines[i].startswith('TOOL_CALL:'):
+                tool_call = self._parse_tool_call(lines, i)
+                if tool_call:
+                    print(f"🔧 Executing tool: {tool_call['command']}")
+                    result = self._execute_tool_call(tool_call)
+                    tool_results.append(result)
+                    i += tool_call.get('lines_consumed', 1)
+                else:
+                    i += 1
+            else:
+                i += 1
+        
+        return tool_results
+    
+    def _parse_tool_call(self, lines: List[str], start_index: int) -> Dict[str, Any]:
+        """Parse a tool call from response lines"""
+        if start_index >= len(lines):
+            return None
+            
+        tool_call = {
+            'command': lines[start_index].replace('TOOL_CALL:', '').strip(),
+            'parameters': {},
+            'reasoning': '',
+            'lines_consumed': 1
+        }
+        
+        # Parse parameters and reasoning
+        i = start_index + 1
+        while i < len(lines) and i < start_index + 10:  # Look ahead max 10 lines
+            line = lines[i].strip()
+            if line.startswith('PARAMETERS:'):
+                param_str = line.replace('PARAMETERS:', '').strip()
+                tool_call['parameters'] = self._parse_parameters(param_str)
+                tool_call['lines_consumed'] += 1
+            elif line.startswith('REASONING:'):
+                tool_call['reasoning'] = line.replace('REASONING:', '').strip()
+                tool_call['lines_consumed'] += 1
+            elif line == '' or not line.startswith(('PARAMETERS:', 'REASONING:')):
+                break
+            i += 1
+        
+        return tool_call
+    
+    def _parse_parameters(self, param_str: str) -> Dict[str, str]:
+        """Parse parameters string into dictionary"""
+        params = {}
+        if not param_str:
+            return params
+            
+        # Split by comma and parse key=value pairs
+        for pair in param_str.split(','):
+            if '=' in pair:
+                key, value = pair.split('=', 1)
+                params[key.strip()] = value.strip()
+        
+        return params
+    
+    def _execute_tool_call(self, tool_call: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a tool call in the container or host system"""
+        command = tool_call['command']
+        params = tool_call['parameters']
+        
+        result = {
+            'tool': command,
+            'parameters': params,
+            'reasoning': tool_call['reasoning'],
+            'success': False,
+            'output': '',
+            'error': '',
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        try:
+            if command == 'curl':
+                result = self._execute_curl(params, result)
+            elif command == 'python3':
+                result = self._execute_python(params, result)
+            elif command in ['cat', 'ls', 'grep', 'echo', 'mkdir']:
+                result = self._execute_shell_command(command, params, result)
+            else:
+                result = self._execute_generic_command(command, params, result)
+                
+        except Exception as e:
+            result['error'] = str(e)
+            result['success'] = False
+            print(f"❌ Tool execution failed: {e}")
+        
+        return result
+    
+    def _execute_curl(self, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute curl command to fetch web content"""
+        url = params.get('url', '')
+        output_file = params.get('output_file', '/workspace/fetched_content.html')
+        
+        if not url:
+            result['error'] = "URL parameter required for curl"
+            return result
+        
+        if self.context.container_name:
+            # Execute in container
+            cmd = ['docker', 'exec', self.context.container_name, 'curl', '-s', '-L', url, '-o', output_file]
+        else:
+            # Execute on host
+            cmd = ['curl', '-s', '-L', url, '-o', output_file]
+        
+        process_result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        result['success'] = process_result.returncode == 0
+        result['output'] = process_result.stdout
+        result['error'] = process_result.stderr
+        
+        if result['success']:
+            print(f"✅ Successfully fetched {url} to {output_file}")
+        
+        return result
+    
+    def _execute_python(self, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute Python script"""
+        script = params.get('script', '')
+        args = params.get('args', '')
+        
+        if not script:
+            result['error'] = "Script parameter required for python3"
+            return result
+        
+        if self.context.container_name:
+            cmd = ['docker', 'exec', self.context.container_name, 'python3', script] + args.split() if args else ['docker', 'exec', self.context.container_name, 'python3', script]
+        else:
+            cmd = ['python3', script] + args.split() if args else ['python3', script]
+        
+        process_result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        result['success'] = process_result.returncode == 0
+        result['output'] = process_result.stdout
+        result['error'] = process_result.stderr
+        
+        return result
+    
+    def _execute_shell_command(self, command: str, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute basic shell commands"""
+        args = []
+        
+        # Build command arguments from parameters
+        if command == 'cat':
+            file_path = params.get('file', '')
+            if file_path:
+                args = [file_path]
+        elif command == 'ls':
+            path = params.get('path', '/workspace')
+            args = [path]
+        elif command == 'mkdir':
+            path = params.get('path', '')
+            if path:
+                args = ['-p', path]
+        elif command == 'echo':
+            text = params.get('text', '')
+            if text:
+                args = [text]
+        
+        if self.context.container_name:
+            cmd = ['docker', 'exec', self.context.container_name, command] + args
+        else:
+            cmd = [command] + args
+        
+        process_result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+        result['success'] = process_result.returncode == 0
+        result['output'] = process_result.stdout
+        result['error'] = process_result.stderr
+        
+        return result
+    
+    def _execute_generic_command(self, command: str, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute generic command with parameters"""
+        args = []
+        for key, value in params.items():
+            if key != 'command':
+                args.extend([f'--{key}', value])
+        
+        if self.context.container_name:
+            cmd = ['docker', 'exec', self.context.container_name, command] + args
+        else:
+            cmd = [command] + args
+        
+        process_result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        result['success'] = process_result.returncode == 0
+        result['output'] = process_result.stdout
+        result['error'] = process_result.stderr
+        
+        return result
+    
+    def _update_execution_context(self, context: Dict[str, Any], response: str, tool_results: List[Dict]) -> Dict[str, Any]:
+        """Update execution context with latest results"""
+        context['execution_history'].append({
+            'response': response,
+            'timestamp': datetime.now().isoformat()
+        })
+        context['tool_results'].extend(tool_results)
+        
+        # Update current state based on results
+        if tool_results:
+            if any(not r['success'] for r in tool_results):
+                context['current_state'] = 'error_recovery'
+            else:
+                context['current_state'] = 'progressing'
+        
+        return context
+    
+    def _is_execution_complete(self, response: str, tool_results: List[Dict]) -> bool:
+        """Check if execution is complete"""
+        completion_indicators = [
+            'task completed', 'execution complete', 'goal achieved',
+            'summary saved', 'process finished', 'done'
+        ]
+        
+        response_lower = response.lower()
+        has_completion_text = any(indicator in response_lower for indicator in completion_indicators)
+        
+        # Also check if recent tool results indicate completion
+        recent_success = len(tool_results) > 0 and all(r['success'] for r in tool_results[-3:])
+        
+        return has_completion_text or (recent_success and 'summary' in response_lower)
+    
+    def _update_state_with_context(self, context: Dict[str, Any]):
+        """Update state files with current context"""
+        # Update plan with current state
+        plan_content = f"# Execution Plan\n\n**Goal:** {context['goal']}\n\n## Current State\n{context['current_state']}\n\n## Progress\n{len(context['execution_history'])} iterations completed\n"
+        self._update_state_file('plan.md', plan_content)
+        
+        # Update variables with latest data
+        variables = {
+            'goal': context['goal'],
+            'current_state': context['current_state'],
+            'iterations': len(context['execution_history']),
+            'tool_calls': len(context['tool_results'])
+        }
+        self._update_state_file('variables.json', json.dumps(variables, indent=2))
+    
+    def _format_environment_info(self, env_info: Dict) -> str:
+        """Format environment info for prompt"""
+        if not env_info:
+            return "Environment: Not detected"
+        
+        return f"""
+        Available tools: {', '.join(env_info.get('available_tools', [])[:10])}
+        Package managers: {', '.join(env_info.get('package_managers', []))}
+        OS: {env_info.get('distro', 'Unknown')}
+        Container: {env_info.get('container_name', 'None')}
+        """
+    
+    def _format_execution_history(self, history: List[Dict]) -> str:
+        """Format execution history for prompt"""
+        if not history:
+            return "No previous execution steps"
+        
+        formatted = []
+        for i, step in enumerate(history[-3:], 1):  # Show last 3 steps
+            formatted.append(f"Step {i}: {step['response'][:200]}...")
+        
+        return '\n'.join(formatted)
+    
+    def _format_tool_results(self, results: List[Dict]) -> str:
+        """Format tool results for prompt"""
+        if not results:
+            return "No tool executions yet"
+        
+        formatted = []
+        for result in results[-5:]:  # Show last 5 results
+            status = "✅" if result['success'] else "❌"
+            formatted.append(f"{status} {result['tool']}: {result['output'][:100]}...")
+        
+        return '\n'.join(formatted)
+
     # Utility methods
     
     def _build_system_context(self) -> str:
