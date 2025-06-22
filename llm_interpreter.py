@@ -58,7 +58,7 @@ class LLMunixInterpreter:
     This class only handles basic setup and environment detection.
     """
     
-    def __init__(self, model: str = "gpt-4o"):
+    def __init__(self, model: str = None):
         """Initialize the LLM interpreter"""
         
         # Validate OpenAI API key
@@ -68,7 +68,7 @@ class LLMunixInterpreter:
         
         # Initialize OpenAI client
         self.client = OpenAI(api_key=self.api_key)
-        self.model = model
+        self.model = model or os.getenv('OPENAI_MODEL', 'gpt-4o')
         
         # Setup paths
         self.llmunix_root = Path(__file__).parent
