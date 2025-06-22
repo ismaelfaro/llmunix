@@ -104,12 +104,18 @@ class LLMunixInterpreter:
         
         print("\n🎯 LLMunix is ready for autonomous execution!")
         print("\nExample commands:")
+        print('  ./llmunix-llm interactive                      # Start interactive session')
         print('  ./llmunix-llm execute: "Create a Python calculator"')
-        print('  ./llmunix-llm execute: "Research AI trends and create summary"')
+        print('  ./llmunix-llm execute: "Research AI trends" -i   # Execute and enter interactive mode')
         print('  ./llmunix-llm execute: "Fetch data from URL and analyze"')
+        print("\nInteractive session features:")
+        print('  🔄 Goal refinement with "refine" command')
+        print('  📊 Workspace status with "status" command') 
+        print('  📜 Execution history with "history" command')
+        print('  🧹 Workspace management with "clear" command')
         print("\n" + "="*60 + "\n")
     
-    def execute(self, goal: str):
+    def execute(self, goal: str, cleanup_after=True):
         """Execute a goal by delegating to SystemAgent.md"""
         
         print(f"🎯 Executing goal: {goal}")
@@ -137,7 +143,8 @@ class LLMunixInterpreter:
             print(f"❌ Execution failed: {e}")
             self._log_error(str(e))
         finally:
-            self._cleanup_execution()
+            if cleanup_after:
+                self._cleanup_execution()
     
     def _setup_workspace(self):
         """Setup modular workspace structure"""
@@ -847,15 +854,221 @@ Continue execution according to the SystemAgent specification. If you need to ex
                 print(f"🧹 Container {self.container_name} cleaned up")
             except:
                 pass
+    
+    def interactive_session(self):
+        """Start an interactive session for goal refinement and new tasks"""
+        print("\n" + "="*60)
+        print("🎯 LLMunix Interactive Session")
+        print("="*60)
+        print("Enter goals to execute, or type commands:")
+        print("  'refine' - Refine the last goal")
+        print("  'status' - Show current workspace status")
+        print("  'history' - Show execution history")
+        print("  'clear' - Clear workspace for fresh start")
+        print("  'help' - Show this help")
+        print("  'exit' or 'quit' - Exit interactive session")
+        print("-"*60)
+        
+        try:
+            while True:
+                try:
+                    # Get user input
+                    user_input = input("\n🎯 llmunix> ").strip()
+                    
+                    if not user_input:
+                        continue
+                    
+                    # Handle commands
+                    if user_input.lower() in ['exit', 'quit', 'q']:
+                        print("👋 Goodbye!")
+                        break
+                    elif user_input.lower() == 'help':
+                        self._show_interactive_help()
+                    elif user_input.lower() == 'status':
+                        self._show_status()
+                    elif user_input.lower() == 'history':
+                        self._show_history()
+                    elif user_input.lower() == 'clear':
+                        self._interactive_clear_workspace()
+                    elif user_input.lower() == 'refine':
+                        self._refine_last_goal()
+                    else:
+                        # Treat as a new goal to execute
+                        print(f"\n🚀 Executing: {user_input}")
+                        self.execute(user_input, cleanup_after=False)
+                        print(f"\n✅ Goal completed. Ready for next command.")
+                        
+                except KeyboardInterrupt:
+                    print("\n\n👋 Session interrupted. Goodbye!")
+                    break
+                except EOFError:
+                    print("\n\n👋 Session ended. Goodbye!")
+                    break
+                except Exception as e:
+                    print(f"\n❌ Error: {e}")
+                    print("Type 'help' for available commands or 'exit' to quit.")
+        finally:
+            # Cleanup when session ends
+            self._cleanup_execution()
+    
+    def _show_interactive_help(self):
+        """Show interactive session help"""
+        print("\n📖 LLMunix Interactive Session Help")
+        print("-"*40)
+        print("Commands:")
+        print("  refine       - Refine and re-execute the last goal")
+        print("  status       - Show workspace and execution status")
+        print("  history      - Show execution history")
+        print("  clear        - Clear workspace for fresh start")
+        print("  help         - Show this help")
+        print("  exit/quit    - Exit interactive session")
+        print("\nTo execute a goal, simply type it:")
+        print("  Create a Python calculator")
+        print("  Fetch content from https://example.com")
+        print("  Analyze the data in my workspace")
+        print("\nExamples:")
+        print("  🎯 llmunix> Create a simple web scraper")
+        print("  🎯 llmunix> refine")
+        print("  🎯 llmunix> status")
+        print("  🎯 llmunix> Build a REST API server")
+    
+    def _show_status(self):
+        """Show current workspace status"""
+        print("\n📊 Workspace Status")
+        print("-"*30)
+        
+        if not self.workspace_dir.exists():
+            print("⚠️  No workspace found. Execute a goal first.")
+            return
+        
+        # Show workspace files
+        files = list(self.workspace_dir.rglob('*'))
+        file_count = len([f for f in files if f.is_file()])
+        dir_count = len([f for f in files if f.is_dir()]) - 1  # Exclude workspace itself
+        
+        print(f"📁 Workspace: {self.workspace_dir}")
+        print(f"📄 Files: {file_count}")
+        print(f"📂 Directories: {dir_count}")
+        
+        # Show state files status
+        if self.state_dir.exists():
+            print(f"\n🧠 State Directory: {self.state_dir}")
+            state_files = ['plan.md', 'history.md', 'context.md', 'constraints.md', 'variables.json']
+            for state_file in state_files:
+                file_path = self.state_dir / state_file
+                status = "✅" if file_path.exists() else "❌"
+                print(f"  {status} {state_file}")
+        
+        # Show recent files
+        recent_files = sorted(
+            [f for f in files if f.is_file()], 
+            key=lambda f: f.stat().st_mtime, 
+            reverse=True
+        )[:5]
+        
+        if recent_files:
+            print(f"\n📝 Recent files:")
+            for f in recent_files:
+                rel_path = f.relative_to(self.workspace_dir)
+                size = f.stat().st_size
+                print(f"  • {rel_path} ({size} bytes)")
+    
+    def _show_history(self):
+        """Show execution history"""
+        print("\n📜 Execution History")
+        print("-"*30)
+        
+        history_file = self.state_dir / "history.md" if self.state_dir else None
+        if not history_file or not history_file.exists():
+            print("⚠️  No execution history found.")
+            return
+        
+        try:
+            history_content = history_file.read_text(encoding='utf-8')
+            
+            # Extract recent entries (last 1000 chars for readability)
+            if len(history_content) > 1000:
+                print("... (showing recent history)")
+                history_content = "..." + history_content[-1000:]
+            
+            print(history_content)
+            
+        except Exception as e:
+            print(f"❌ Error reading history: {e}")
+    
+    def _interactive_clear_workspace(self):
+        """Clear workspace interactively with confirmation"""
+        print("\n🧹 Clear Workspace")
+        print("-"*20)
+        
+        if not self.workspace_dir.exists():
+            print("⚠️  No workspace to clear.")
+            return
+        
+        # Show what will be cleared
+        files = list(self.workspace_dir.rglob('*'))
+        file_count = len([f for f in files if f.is_file()])
+        
+        print(f"This will delete {file_count} files in {self.workspace_dir}")
+        
+        confirm = input("Are you sure? [y/N]: ").strip().lower()
+        if confirm in ['y', 'yes']:
+            self._clean_workspace()
+            print("✅ Workspace cleared successfully.")
+        else:
+            print("❌ Clear cancelled.")
+    
+    def _refine_last_goal(self):
+        """Refine and re-execute the last goal"""
+        print("\n🔄 Refine Last Goal")
+        print("-"*20)
+        
+        # Get last goal from context
+        last_goal = None
+        if self.context and hasattr(self.context, 'goal'):
+            last_goal = self.context.goal
+        else:
+            # Try to read from variables.json
+            try:
+                variables_file = self.state_dir / "variables.json"
+                if variables_file.exists():
+                    variables = json.loads(variables_file.read_text())
+                    last_goal = variables.get('goal')
+            except:
+                pass
+        
+        if not last_goal:
+            print("⚠️  No previous goal found to refine.")
+            print("💡 Execute a goal first, then use 'refine' to improve it.")
+            return
+        
+        print(f"Previous goal: {last_goal}")
+        print("\nHow would you like to refine this goal?")
+        print("Enter your refinement instructions (or press Enter to re-execute as-is):")
+        
+        refinement = input("🔄 refinement> ").strip()
+        
+        if refinement:
+            # Create refined goal
+            refined_goal = f"Refine the previous goal '{last_goal}' with these improvements: {refinement}"
+            print(f"\n🚀 Executing refined goal...")
+            self.execute(refined_goal, cleanup_after=False)
+        else:
+            # Re-execute the same goal
+            print(f"\n🚀 Re-executing previous goal...")
+            self.execute(last_goal, cleanup_after=False)
+        
+        print(f"\n✅ Refinement completed. Ready for next command.")
 
 def main():
     """Main entry point for the LLM interpreter"""
     import argparse
     
     parser = argparse.ArgumentParser(description='LLMunix LLM Interpreter - Lightweight Runtime')
-    parser.add_argument('command', choices=['boot', 'execute'], help='Command to run')
+    parser.add_argument('command', choices=['boot', 'execute', 'interactive'], help='Command to run')
     parser.add_argument('goal', nargs='?', help='Goal to execute (for execute command)')
     parser.add_argument('--model', default='gpt-4o', help='OpenAI model to use')
+    parser.add_argument('--interactive', '-i', action='store_true', help='Start interactive session after execution')
     
     args = parser.parse_args()
     
@@ -869,6 +1082,13 @@ def main():
                 print("❌ Goal required for execute command")
                 sys.exit(1)
             interpreter.execute(args.goal)
+            
+            # Start interactive session if requested
+            if args.interactive:
+                interpreter.interactive_session()
+        elif args.command == 'interactive':
+            interpreter.boot()
+            interpreter.interactive_session()
             
     except Exception as e:
         print(f"❌ Interpreter failed: {e}")

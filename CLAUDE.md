@@ -134,6 +134,16 @@ llm-os/
 
 ### Execution Commands
 
+**Interactive Session (Claude Code style):**
+```
+./llmunix-llm interactive
+```
+
+**Execute with Interactive Mode:**
+```
+./llmunix-llm execute: "Create a Python calculator" -i
+```
+
 **Real Task Execution:**
 ```
 "Act as SystemAgent and execute the RealWorld_Research_Task scenario in EXECUTION MODE"
@@ -148,6 +158,41 @@ llm-os/
 ```
 "Act as SystemAgent and execute: [your goal] using real tools"
 ```
+
+### Interactive Session Features
+
+The interactive session provides a Claude Code-like experience:
+
+**Available Commands:**
+- `refine` - Refine and re-execute the last goal with improvements
+- `status` - Show current workspace and execution status  
+- `history` - Display execution history
+- `clear` - Clear workspace for fresh start (with confirmation)
+- `help` - Show available commands and examples
+- `exit`/`quit` - Exit interactive session
+
+**Goal Execution:**
+Simply type any goal to execute it:
+```
+🎯 llmunix> Create a web scraper for news articles
+🎯 llmunix> Build a REST API with FastAPI
+🎯 llmunix> Analyze the data in my workspace
+```
+
+**Goal Refinement:**
+After executing a goal, use `refine` to improve it:
+```
+🎯 llmunix> refine
+Previous goal: Create a web scraper for news articles
+How would you like to refine this goal?
+🔄 refinement> Add error handling and save to JSON format
+```
+
+**Session Management:**
+- Docker containers persist across multiple executions within a session
+- Workspace state is maintained between commands
+- Full execution history and context available throughout session
+- Clean exit with proper resource cleanup
 
 ## Development
 
