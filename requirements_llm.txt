@@ -1,0 +1,13 @@
+# LLMunix LLM Interpreter Dependencies
+# Required packages for autonomous markdown operating system execution
+
+# Core dependencies
+openai>=1.0.0           # OpenAI API client for LLM calls
+python-dotenv>=1.0.0    # Environment variable management
+requests>=2.31.0        # HTTP requests for web content fetching
+pyyaml>=6.0             # YAML parsing for configuration
+
+# Optional dependencies (will be installed in Docker container as needed)
+# docker>=6.0.0         # Docker SDK for Python (alternative to CLI calls)
+# beautifulsoup4>=4.12.0 # HTML parsing for web content
+# markdown>=3.4.0       # Markdown processing utilities

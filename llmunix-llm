@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# LLMunix LLM Interpreter CLI Wrapper
+# Provides convenient access to the LLM-driven runtime
+
+set -e
+
+# Check if Python is available
+if ! command -v python3 &> /dev/null; then
+    echo "❌ Python 3 is required but not found"
+    exit 1
+fi
+
+# Get the directory of this script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check if .env file exists
+if [ ! -f "$SCRIPT_DIR/.env" ]; then
+    echo "⚠️  .env file not found. Create from example.env:"
+    echo "   cp example.env .env"
+    echo "   # Edit .env with your OpenAI API key"
+    exit 1
+fi
+
+# Parse command
+COMMAND=""
+GOAL=""
+
+# Handle different argument patterns
+if [ "$1" = "boot" ]; then
+    COMMAND="boot"
+elif [ "$1" = "execute:" ]; then
+    COMMAND="execute"
+    GOAL="$2"
+elif [[ "$1" == execute:* ]]; then
+    COMMAND="execute"
+    GOAL="${1#execute:}"
+    # Remove leading/trailing quotes and whitespace
+    GOAL=$(echo "$GOAL" | sed 's/^[[:space:]]*"//; s/"[[:space:]]*$//' | sed "s/^[[:space:]]*'//; s/'[[:space:]]*$//")
+elif [ "$1" = "execute" ]; then
+    COMMAND="execute"
+    shift
+    GOAL="$*"
+else
+    echo "LLMunix LLM Interpreter - Autonomous Markdown Operating System"
+    echo ""
+    echo "Usage:"
+    echo "  $0 boot                                    # Boot LLMunix OS"
+    echo "  $0 execute: \"Your goal here\"               # Execute goal"
+    echo "  $0 execute \"Your goal here\"                # Alternative syntax"
+    echo ""
+    echo "Examples:"
+    echo "  $0 boot"
+    echo "  $0 execute: \"Create a Python calculator\""
+    echo "  $0 execute: \"Fetch content from https://example.com and summarize\""
+    echo ""
+    exit 1
+fi
+
+# Execute command
+cd "$SCRIPT_DIR"
+
+if [ "$COMMAND" = "boot" ]; then
+    echo "🚀 Booting LLMunix with LLM Interpreter..."
+    python3 llm_interpreter.py boot
+elif [ "$COMMAND" = "execute" ]; then
+    if [ -z "$GOAL" ]; then
+        echo "❌ Goal required for execute command"
+        exit 1
+    fi
+    echo "🎯 Executing goal with LLM Interpreter..."
+    python3 llm_interpreter.py execute "$GOAL"
+fi
