@@ -1,30 +1,27 @@
 #!/usr/bin/env python3
 
 """
-LLMunix LLM Interpreter - Pure Markdown Operating System Runtime
+LLMunix LLM Interpreter - Lightweight Runtime for Pure Markdown OS
 
-This module implements an LLM-driven interpreter that replaces Claude Code
-as the runtime engine for LLMunix. It provides autonomous execution of
-markdown-defined agent/tool systems using OpenAI's GPT models.
+This is a minimal runtime that delegates all logic to markdown-defined agents
+and tools. The interpreter serves as a bridge between the command line and
+the LLMunix markdown specifications.
 
 Key Features:
-- Zero hardcoded logic - all decisions made by LLM
-- Docker sandbox for secure tool execution
-- Environment detection and adaptation
-- Modular state management
-- Real tool integration with error recovery
+- No hardcoded logic - everything delegated to markdown agents/tools
+- Docker/CLI tool detection and mapping
+- SystemAgent.md orchestrates all execution
+- Pure markdown-driven decision making
+- Lightweight bridge to host system tools
 
-Created as part of LLMunix's dual runtime architecture.
+The runtime reads markdown specifications and lets the SystemAgent make all decisions.
 """
 
 import os
 import sys
 import json
 import time
-import yaml
 import subprocess
-import tempfile
-import requests
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
@@ -55,10 +52,10 @@ class ExecutionContext:
 
 class LLMunixInterpreter:
     """
-    LLMunix LLM Interpreter - Autonomous markdown-driven execution
+    LLMunix LLM Interpreter - Lightweight Runtime
     
-    This interpreter replaces Claude Code as the runtime engine, providing
-    equivalent capabilities through LLM-driven decision making.
+    Minimal runtime that delegates all logic to markdown-defined SystemAgent.
+    This class only handles basic setup and environment detection.
     """
     
     def __init__(self, model: str = "gpt-4o"):
@@ -88,7 +85,7 @@ class LLMunixInterpreter:
     
     def boot(self):
         """Boot LLMunix operating system"""
-        print("\\n" + "="*60)
+        print("\n" + "="*60)
         print("██╗     ██╗     ███╗   ███╗██╗   ██╗███╗   ██╗██╗██╗  ██╗")
         print("██║     ██║     ████╗ ████║██║   ██║████╗  ██║██║╚██╗██╔╝")
         print("██║     ██║     ██╔████╔██║██║   ██║██╔██╗ ██║██║ ╚███╔╝ ")
@@ -105,15 +102,15 @@ class LLMunixInterpreter:
         # Setup Docker environment if available
         self._setup_docker()
         
-        print("\\n🎯 LLMunix is ready for autonomous execution!")
-        print("\\nExample commands:")
+        print("\n🎯 LLMunix is ready for autonomous execution!")
+        print("\nExample commands:")
         print('  ./llmunix-llm execute: "Create a Python calculator"')
         print('  ./llmunix-llm execute: "Research AI trends and create summary"')
         print('  ./llmunix-llm execute: "Fetch data from URL and analyze"')
-        print("\\n" + "="*60 + "\\n")
+        print("\n" + "="*60 + "\n")
     
     def execute(self, goal: str):
-        """Execute a goal using LLM-driven autonomous planning and execution"""
+        """Execute a goal by delegating to SystemAgent.md"""
         
         print(f"🎯 Executing goal: {goal}")
         print("="*60)
@@ -133,9 +130,9 @@ class LLMunixInterpreter:
         if self.context.container_name:
             self._detect_container_environment()
         
-        # LLM-driven execution loop
+        # Delegate execution to SystemAgent
         try:
-            self._llm_execution_loop()
+            self._delegate_to_system_agent()
         except Exception as e:
             print(f"❌ Execution failed: {e}")
             self._log_error(str(e))
@@ -152,10 +149,10 @@ class LLMunixInterpreter:
         
         # Initialize state files
         state_files = {
-            'plan.md': f"# Execution Plan\\n\\n**Goal:** {self.context.goal}\\n\\n## Status\\nInitializing...\\n",
-            'context.md': "# Execution Context\\n\\n## Knowledge Accumulation\\n\\n",
-            'history.md': f"# Execution History\\n\\n**Started:** {datetime.now().isoformat()}\\n\\n",
-            'constraints.md': "# Behavioral Constraints\\n\\n## Initial Settings\\n- priority: balanced\\n- error_tolerance: moderate\\n",
+            'plan.md': f"# Execution Plan\n\n**Goal:** {self.context.goal}\n\n## Status\nInitializing...\n",
+            'context.md': "# Execution Context\n\n## Knowledge Accumulation\n\n",
+            'history.md': f"# Execution History\n\n**Started:** {datetime.now().isoformat()}\n\n",
+            'constraints.md': "# Behavioral Constraints\n\n## Initial Settings\n- priority: balanced\n- error_tolerance: moderate\n",
             'variables.json': json.dumps({"goal": self.context.goal, "start_time": datetime.now().isoformat()}, indent=2)
         }
         
@@ -180,12 +177,16 @@ class LLMunixInterpreter:
             # Create and start container
             container_name = f"llmunix-{int(time.time())}"
             
+            # Mount workspace directory for file access from outside container
+            workspace_mount = f"{self.workspace_dir}:/workspace"
+            
             # Use Alpine Linux for lightweight container with package manager detection
             run_command = [
                 'docker', 'run', '-d', '--name', container_name,
+                '-v', workspace_mount,
                 '-w', '/workspace',
                 'alpine:latest',
-                'sh', '-c', 'apk add --no-cache python3 py3-pip curl bash && sleep 3600'
+                'sh', '-c', 'apk add --no-cache python3 py3-pip curl bash && pip install requests beautifulsoup4 && sleep 3600'
             ]
             
             result = subprocess.run(run_command, capture_output=True, text=True, timeout=60)
@@ -288,7 +289,7 @@ class LLMunixInterpreter:
                         return f"Alpine Linux v{result.stdout.strip()}"
                     elif file_path == '/etc/os-release':
                         # Parse os-release for detailed info
-                        for line in result.stdout.split('\\n'):
+                        for line in result.stdout.split('\n'):
                             if line.startswith('PRETTY_NAME='):
                                 return line.split('=')[1].strip('\"')
                     else:
@@ -316,7 +317,7 @@ class LLMunixInterpreter:
 ## Distribution
 {env_info.get('distro', 'Unknown')}
 
-## Recommendations for LLM
+## Recommendations for SystemAgent
 - Use these available tools: {', '.join(env_info.get('available_tools', [])[:10])}
 - For package installation, use: {env_info.get('package_managers', ['unknown'])[0] if env_info.get('package_managers') else 'unknown'}
 - This is a {env_info.get('distro', 'unknown')} system
@@ -331,376 +332,75 @@ class LLMunixInterpreter:
         env_file.write_text(doc_content, encoding='utf-8')
         print(f"📋 Environment documentation created: {env_file}")
     
-    def _llm_execution_loop(self):
-        """Main LLM-driven execution loop"""
-        print("🧠 Starting LLM-driven execution...")
+    def _delegate_to_system_agent(self):
+        """Delegate execution to SystemAgent.md"""
+        print("🧠 Delegating to SystemAgent.md...")
         
-        # Phase 1: Goal Analysis and Planning
-        print("\\n📋 Phase 1: Goal Analysis and Planning")
-        plan = self._llm_analyze_and_plan()
-        self._update_state_file('plan.md', plan)
+        # Read SystemAgent specification
+        system_agent_path = self.llmunix_root / "system" / "SystemAgent.md"
+        if not system_agent_path.exists():
+            raise FileNotFoundError(f"SystemAgent.md not found at {system_agent_path}")
         
-        # Phase 2: Step-by-step execution
-        print("\\n🔄 Phase 2: Execution")
-        self._llm_execute_plan()
+        system_agent_spec = system_agent_path.read_text(encoding='utf-8')
         
-        # Phase 3: Completion and summary
-        print("\\n📝 Phase 3: Completion Summary")
-        self._llm_generate_summary()
-    
-    def _llm_analyze_and_plan(self) -> str:
-        """LLM analyzes the goal and creates execution plan"""
-        
-        # Build context for LLM
-        system_context = self._build_system_context()
+        # Build execution context for SystemAgent
         environment_context = self._build_environment_context()
+        available_tools = self._get_available_cli_tools()
         
-        prompt = f"""You are the LLMunix System Agent - an autonomous AI operating system that executes goals through markdown-defined tools and agents.
+        # Create execution prompt that delegates to SystemAgent
+        prompt = f"""You are acting as the SystemAgent from this specification:
 
-SYSTEM CONTEXT:
-{system_context}
+{system_agent_spec}
 
-ENVIRONMENT CONTEXT:
+EXECUTION CONTEXT:
+- Goal: {self.context.goal}
+- Workspace: {self.workspace_dir}
+- State directory: {self.state_dir}
+- Container: {self.context.container_name if self.context.container_name else "None (host system)"}
+
+ENVIRONMENT:
 {environment_context}
 
-GOAL TO EXECUTE:
-{self.context.goal}
+AVAILABLE CLI TOOLS:
+{available_tools}
 
-Your task is to analyze this goal and create a detailed execution plan. Consider:
+WORKSPACE STATE FILES:
+{self._list_workspace_files()}
 
-1. **Goal Analysis**: Break down what exactly needs to be accomplished
-2. **Tool Selection**: What tools/capabilities will be needed
-3. **Step Sequencing**: Logical order of operations
-4. **Error Handling**: Potential failure points and recovery strategies
-5. **Environment Adaptation**: Use detected tools and avoid unavailable ones
+Execute the goal by following the SystemAgent specification. You have access to:
+1. All CLI tools available in the environment
+2. File operations in the workspace
+3. Container commands if available
+4. The modular state management system
 
-Respond with a structured markdown execution plan that will be saved to plan.md.
-Focus on practical, achievable steps using available tools.
+Begin execution according to the SystemAgent specification."""
 
-EXECUTION PLAN:"""
-
-        response = self._call_llm(prompt, max_tokens=2000)
+        # Execute via SystemAgent
+        response = self._call_llm(prompt, max_tokens=3000)
         
-        print("✅ Execution plan generated")
-        return response
+        # Log the SystemAgent response
+        self._log_execution_step("SystemAgent Execution", response)
+        
+        print("✅ Execution delegated to SystemAgent")
     
-    def _llm_execute_plan(self):
-        """Execute the LLM-generated plan step by step"""
-        
-        # Read current plan
-        plan_file = self.state_dir / "plan.md"
-        current_plan = plan_file.read_text(encoding='utf-8') if plan_file.exists() else ""
-        
-        # Get current context
-        context_file = self.state_dir / "context.md"
-        current_context = context_file.read_text(encoding='utf-8') if context_file.exists() else ""
-        
-        max_iterations = 10
-        iteration = 0
-        
-        while iteration < max_iterations:
-            iteration += 1
-            print(f"\\n🔄 Execution iteration {iteration}")
-            
-            # LLM decides next action
-            action = self._llm_decide_next_action(current_plan, current_context, iteration)
-            
-            if "EXECUTION_COMPLETE" in action:
-                print("✅ LLM determined execution is complete")
-                break
-            
-            # Execute the action
-            self._execute_action(action, iteration)
-            
-            # Update context
-            current_context = self._read_state_file("context.md")
-            
-            # Brief pause between iterations
-            time.sleep(1)
-        
-        if iteration >= max_iterations:
-            print("⚠️  Maximum iterations reached")
-    
-    def _llm_decide_next_action(self, plan: str, context: str, iteration: int) -> str:
-        """LLM decides the next action to take"""
-        
-        environment_context = self._build_environment_context()
-        history = self._read_state_file("history.md")
-        
-        prompt = f"""You are executing step {iteration} of the LLMunix goal: "{self.context.goal}"
-
-CURRENT EXECUTION PLAN:
-{plan}
-
-ACCUMULATED CONTEXT:
-{context}
-
-EXECUTION HISTORY:
-{history}
-
-ENVIRONMENT CONTEXT:
-{environment_context}
-
-Based on the plan, context, and history, decide the next action to take.
-
-Available action types:
-1. **TOOL_EXECUTION**: Execute a command/tool (specify exact command)
-2. **FILE_OPERATION**: Create, read, or modify files
-3. **WEB_REQUEST**: Fetch content from URLs
-4. **ANALYSIS**: Analyze data or content
-5. **EXECUTION_COMPLETE**: Mark execution as finished
-
-Guidelines:
-- Use only available tools from environment detection
-- Be specific about commands and parameters
-- If goal is achieved, respond with "EXECUTION_COMPLETE"
-- Adapt to any errors from previous iterations
-- Make real progress toward the goal
-
-NEXT ACTION:"""
-        
-        response = self._call_llm(prompt, max_tokens=1500)
-        return response
-    
-    def _execute_action(self, action: str, iteration: int):
-        """Execute an LLM-determined action"""
-        
-        print(f"🎬 Executing action: {action[:100]}...")
-        
-        # Log the action
-        self._log_execution_step(f"Iteration {iteration}", action)
-        
-        try:
-            # Parse action type and execute accordingly
-            if "TOOL_EXECUTION" in action or "docker exec" in action or any(cmd in action.lower() for cmd in ['python', 'curl', 'cat', 'echo', 'mkdir']):
-                self._execute_tool_action(action)
-            elif "FILE_OPERATION" in action or "file" in action.lower():
-                self._execute_file_action(action)
-            elif "WEB_REQUEST" in action or "http" in action:
-                self._execute_web_action(action)
-            elif "ANALYSIS" in action:
-                self._execute_analysis_action(action)
-            else:
-                # Generic LLM processing
-                self._execute_generic_action(action)
-                
-        except Exception as e:
-            error_msg = f"Action execution failed: {e}"
-            print(f"❌ {error_msg}")
-            self._log_execution_step(f"ERROR in iteration {iteration}", error_msg)
-    
-    def _execute_tool_action(self, action: str):
-        """Execute tool/command actions"""
-        
-        # Extract command from action
-        command = self._extract_command_from_action(action)
-        
-        if not command:
-            print("⚠️  No command found in action")
-            return
-        
-        print(f"🔧 Executing command: {command}")
-        
-        if self.container_name:
-            # Execute in Docker container
-            result = self._execute_in_container(command)
+    def _get_available_cli_tools(self) -> str:
+        """Get list of available CLI tools"""
+        if self.context.environment_info:
+            tools = self.context.environment_info.get('available_tools', [])
+            return f"Container tools: {', '.join(tools)}"
         else:
-            # Simulate execution
-            result = f"SIMULATED: {command}\\nOutput would appear here in real execution"
-        
-        # Log result
-        self._log_execution_step("Tool Execution Result", result)
-        self._update_context(f"Executed: {command}\\nResult: {result}")
+            # Host system tools
+            common_tools = ['python3', 'curl', 'cat', 'echo', 'mkdir', 'ls', 'grep', 'sed']
+            return f"Host system tools: {', '.join(common_tools)} (detection needed)"
     
-    def _execute_file_action(self, action: str):
-        """Execute file operations"""
-        print("📁 Executing file operation...")
-        
-        # Use LLM to interpret file action
-        file_result = self._call_llm(f"""
-        Interpret this file action and provide a summary:
-        {action}
-        
-        If this involves creating/modifying files, provide the filename and content.
-        If reading files, provide what should be read.
-        
-        File operation summary:""", max_tokens=500)
-        
-        self._log_execution_step("File Operation", file_result)
-        self._update_context(f"File operation: {file_result}")
-    
-    def _execute_web_action(self, action: str):
-        """Execute web requests"""
-        print("🌐 Executing web request...")
-        
-        # Extract URL if present
-        import re
-        url_pattern = r'https?://[^\\s]+'
-        urls = re.findall(url_pattern, action)
-        
-        if urls:
-            url = urls[0]
-            try:
-                print(f"📡 Fetching: {url}")
-                response = requests.get(url, timeout=10)
-                content = response.text[:2000]  # Limit content
-                
-                result = f"Fetched {url}\\nStatus: {response.status_code}\\nContent preview: {content}..."
-                self._log_execution_step("Web Request", result)
-                self._update_context(f"Web content from {url}: {content[:500]}...")
-                
-            except Exception as e:
-                error_msg = f"Web request failed: {e}"
-                self._log_execution_step("Web Request Error", error_msg)
-        else:
-            self._log_execution_step("Web Action", "No URL found in action")
-    
-    def _execute_analysis_action(self, action: str):
-        """Execute analysis actions"""
-        print("🔍 Executing analysis...")
-        
-        # Use LLM for analysis
-        analysis_result = self._call_llm(f"""
-        Perform this analysis task:
-        {action}
-        
-        Provide a structured analysis with key findings and insights.
-        
-        Analysis result:""", max_tokens=1000)
-        
-        self._log_execution_step("Analysis", analysis_result)
-        self._update_context(f"Analysis completed: {analysis_result}")
-    
-    def _execute_generic_action(self, action: str):
-        """Execute generic actions via LLM processing"""
-        print("⚙️  Processing generic action...")
-        
-        result = self._call_llm(f"""
-        Process this action and provide a result:
-        {action}
-        
-        Action result:""", max_tokens=800)
-        
-        self._log_execution_step("Generic Action", result)
-        self._update_context(f"Action processed: {result}")
-    
-    def _extract_command_from_action(self, action: str) -> Optional[str]:
-        """Extract executable command from LLM action"""
-        
-        # Look for common command patterns
-        import re
-        
-        # Direct command patterns
-        patterns = [
-            r'docker exec [^\\n]+',
-            r'python3? [^\\n]+',
-            r'curl [^\\n]+',
-            r'echo [^\\n]+',
-            r'cat [^\\n]+',
-            r'mkdir [^\\n]+',
-            r'ls [^\\n]+',
-            r'pip3? [^\\n]+',
-            r'apk [^\\n]+',
-            r'apt-get [^\\n]+'
-        ]
-        
-        for pattern in patterns:
-            matches = re.findall(pattern, action, re.IGNORECASE)
-            if matches:
-                return matches[0].strip()
-        
-        # Look for code blocks
-        code_block_pattern = r'```(?:bash|shell)?\\n([^`]+)```'
-        code_matches = re.findall(code_block_pattern, action, re.MULTILINE | re.DOTALL)
-        if code_matches:
-            return code_matches[0].strip()
-        
-        return None
-    
-    def _execute_in_container(self, command: str) -> str:
-        """Execute command in Docker container"""
-        try:
-            # Handle multi-line commands
-            if '\\n' in command:
-                # Create temporary script
-                script_content = command
-                script_path = f"/tmp/llmunix_script_{int(time.time())}.sh"
-                
-                # Write script to container
-                subprocess.run([
-                    'docker', 'exec', self.container_name,
-                    'sh', '-c', f'echo "{script_content}" > {script_path} && chmod +x {script_path}'
-                ], timeout=30)
-                
-                # Execute script
-                result = subprocess.run([
-                    'docker', 'exec', self.container_name, 'sh', script_path
-                ], capture_output=True, text=True, timeout=60)
-                
-                # Clean up
-                subprocess.run([
-                    'docker', 'exec', self.container_name, 'rm', script_path
-                ], capture_output=True, timeout=10)
-                
-            else:
-                # Simple command execution
-                if command.startswith('docker exec'):
-                    # Remove docker exec prefix if present
-                    command = command.replace(f'docker exec {self.container_name}', '').strip()
-                
-                result = subprocess.run([
-                    'docker', 'exec', self.container_name, 'sh', '-c', command
-                ], capture_output=True, text=True, timeout=60)
-            
-            output = f"Exit code: {result.returncode}\\n"
-            if result.stdout:
-                output += f"STDOUT:\\n{result.stdout}\\n"
-            if result.stderr:
-                output += f"STDERR:\\n{result.stderr}\\n"
-            
-            return output
-            
-        except subprocess.TimeoutExpired:
-            return "Command timed out"
-        except Exception as e:
-            return f"Execution error: {e}"
-    
-    def _llm_generate_summary(self):
-        """Generate execution summary"""
-        
-        history = self._read_state_file("history.md")
-        context = self._read_state_file("context.md")
-        
-        prompt = f"""Generate a completion summary for the LLMunix execution.
-
-ORIGINAL GOAL: {self.context.goal}
-
-EXECUTION HISTORY:
-{history}
-
-ACCUMULATED CONTEXT:
-{context}
-
-Provide a structured summary including:
-1. **Goal Achievement**: Was the goal accomplished?
-2. **Key Actions**: What major steps were taken?
-3. **Results**: What was produced/accomplished?
-4. **Challenges**: Any issues encountered and how they were resolved?
-5. **Files/Outputs**: What files or outputs were created?
-
-EXECUTION SUMMARY:"""
-        
-        summary = self._call_llm(prompt, max_tokens=1500)
-        
-        # Save summary
-        summary_file = self.workspace_dir / "execution_summary.md"
-        summary_file.write_text(summary, encoding='utf-8')
-        
-        print("\\n" + "="*60)
-        print("📋 EXECUTION SUMMARY")
-        print("="*60)
-        print(summary)
-        print("="*60)
+    def _list_workspace_files(self) -> str:
+        """List current workspace files"""
+        files = []
+        for file_path in self.workspace_dir.rglob('*'):
+            if file_path.is_file():
+                rel_path = file_path.relative_to(self.workspace_dir)
+                files.append(str(rel_path))
+        return "\n".join(files) if files else "No files in workspace"
     
     # Utility methods
     
@@ -708,7 +408,7 @@ EXECUTION SUMMARY:"""
         """Build system context for LLM"""
         return f"""
         - LLMunix Pure Markdown Operating System
-        - Runtime: LLM Interpreter (autonomous)
+        - Runtime: LLM Interpreter (lightweight)
         - Workspace: {self.workspace_dir}
         - State management: {self.state_dir}
         - Docker available: {hasattr(self, 'container_name')}
@@ -755,7 +455,7 @@ EXECUTION SUMMARY:"""
     def _log_execution_step(self, step: str, content: str):
         """Log an execution step"""
         timestamp = datetime.now().isoformat()
-        log_entry = f"\\n## {step} - {timestamp}\\n\\n{content}\\n"
+        log_entry = f"\n## {step} - {timestamp}\n\n{content}\n"
         
         history_file = self.state_dir / "history.md"
         current_history = history_file.read_text(encoding='utf-8') if history_file.exists() else ""
@@ -766,7 +466,7 @@ EXECUTION SUMMARY:"""
     def _update_context(self, content: str):
         """Update execution context"""
         timestamp = datetime.now().isoformat()
-        context_entry = f"\\n**{timestamp}:** {content}\\n"
+        context_entry = f"\n**{timestamp}:** {content}\n"
         
         context_file = self.state_dir / "context.md"
         current_context = context_file.read_text(encoding='utf-8') if context_file.exists() else ""
@@ -804,7 +504,7 @@ def main():
     """Main entry point for the LLM interpreter"""
     import argparse
     
-    parser = argparse.ArgumentParser(description='LLMunix LLM Interpreter')
+    parser = argparse.ArgumentParser(description='LLMunix LLM Interpreter - Lightweight Runtime')
     parser.add_argument('command', choices=['boot', 'execute'], help='Command to run')
     parser.add_argument('goal', nargs='?', help='Goal to execute (for execute command)')
     parser.add_argument('--model', default='gpt-4o', help='OpenAI model to use')

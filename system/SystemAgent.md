@@ -66,9 +66,13 @@ Given a user goal, you MUST follow this state machine process:
 4. **Discover & Plan (Consult Libraries)**:
    - Read `system/SmartLibrary.md` for available components
    - Read `system/ClaudeCodeToolMap.md` for real tool mappings
-   - Filter component selection based on memory recommendations
+   - **Runtime Detection**: Determine execution environment:
+     * Claude Code Runtime → Use [REAL] components (WebFetch, Read, Write, etc.)
+     * LLM Interpreter Runtime → Use [LLM_INTERPRETER] components (curl, bash commands)
+     * Simulation Mode → Use [SIMULATION] components (mock data)
+   - Filter component selection based on memory recommendations and runtime
    - *Component Discovery*: [List components with cost/latency considerations]
-   - *Tool Mapping*: [Map framework tools to Claude Code tools for EXECUTION mode]
+   - *Tool Mapping*: [Map framework tools to appropriate runtime tools]
    - *Execution Plan*: [Create numbered steps in plan.md with inputs, outputs, and metadata]
 
 ### Phase 3: Adaptive State Machine Execution
@@ -84,7 +88,8 @@ Given a user goal, you MUST follow this state machine process:
    
    b. **Constraint-Aware Execution**:
       - Adapt execution style based on current constraints (user_sentiment, priority, active_persona)
-      - **EXECUTION MODE**: Use real Claude Code tools (WebFetch, Read, Write, Bash, etc.)
+      - **EXECUTION MODE (Claude Code Runtime)**: Use real Claude Code tools (WebFetch, Read, Write, Bash, etc.)
+      - **EXECUTION MODE (LLM Interpreter Runtime)**: Use command-line tools (curl, bash, standard Unix tools)
       - **SIMULATION MODE**: Simulate tool execution for training data
       - Use "**State Transition [N→N+1]:**" prefix for each step
    

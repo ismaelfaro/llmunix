@@ -20,6 +20,21 @@ This file is the central registry for all components available to the SystemAgen
 -   **applicability_text**: "Use for fetching real, live web content. Replaces simulation-based web fetching with actual HTTP requests. Ideal for current data, news, articles, and dynamic content that cannot be mocked."
 
 ---
+-   **id**: `tool_llm_interpreter_web_fetch_v1`
+-   **name**: LLMInterpreterWebFetchTool [LLM_INTERPRETER]
+-   **file_path**: `components/tools/LLMInterpreterWebFetchTool.md`
+-   **record_type**: LLM_INTERPRETER_TOOL
+-   **command_tool**: curl, wget
+-   **domain**: data_acquisition
+-   **description**: Fetches real web content using command-line tools (curl/wget) for LLM Interpreter runtime.
+-   **cost**: none (uses local networking)
+-   **latency**: medium (2-10 seconds)
+-   **side_effects**: "Network request to external server"
+-   **version**: 1.0.0
+-   **tags**: [web, fetch, http, real, llm-interpreter, curl, wget]
+-   **applicability_text**: "Use when running in LLM Interpreter runtime for real web content fetching. Provides actual HTTP requests using standard command-line tools available in Docker containers. Essential for internet access in LLM Interpreter environment."
+
+---
 -   **id**: `tool_real_filesystem_v1`
 -   **name**: RealFileSystemTool [REAL]
 -   **file_path**: `components/tools/RealFileSystemTool.md`

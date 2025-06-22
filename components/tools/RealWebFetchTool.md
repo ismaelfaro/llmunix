@@ -31,12 +31,19 @@ error_modes: ["timeout", "404", "403", "rate_limit", "connection_error"]
 
 ## Logic
 
-### EXECUTION MODE:
+### EXECUTION MODE (Claude Code Runtime):
 1. Use Claude Code's WebFetch tool with provided URL and prompt
 2. Capture the real response content
 3. Extract metadata (response time, success status)
 4. Save content to workspace file if needed
 5. Return structured output with content and metadata
+
+### EXECUTION MODE (LLM Interpreter Runtime):
+1. Use curl or wget command to fetch URL content
+2. Parse response headers for metadata (status, content-type)
+3. Extract text content from HTML using simple text processing
+4. Apply prompt instructions to filter/extract relevant content
+5. Save content to workspace file and return structured output
 
 ### SIMULATION MODE:
 1. Generate realistic mock content based on URL
