@@ -1,6 +1,6 @@
 # LLMunix
 
-A Pure Markdown Operating System where everything is either an agent or tool defined in markdown documents. Claude Code serves as the runtime engine interpreting these markdown specifications.
+A Pure Markdown Operating System where everything is either an agent or tool defined in markdown documents. The LLM interpreter reads and sends full markdown specifications to LLM for interpretation and execution of any task.
 
 ## Quick Start
 
@@ -44,7 +44,7 @@ llmunix execute: "Urgent: analyze this legal document for risks in 10 minutes"
 
 LLMunix is an AI-powered operating system that implements **Adaptive Behavior Management** - where system behavior dynamically adapts through evolving behavioral constraints:
 
-- **Pure Markdown Architecture**: All system components are markdown files with robust LLM-based parsing and interpretation
+- **Pure Markdown Architecture**: All system components are markdown files. LLM interpreter reads and sends specifications to LLM for interpretation and execution
 - **Adaptive State Management**: Behavioral constraints (user sentiment, priorities, error tolerance) evolve during execution
 - **Intelligent Memory System**: Structured, queryable experience database with pattern recognition and adaptive learning
 - **Modular State Architecture**: Specialized state files (plan.md, context.md, constraints.md) for atomic updates

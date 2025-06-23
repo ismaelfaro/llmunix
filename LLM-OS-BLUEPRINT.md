@@ -2,7 +2,7 @@
 
 ## Overview
 
-LLM-OS uses Claude Code as its runtime engine. Instead of simulation, it performs real operations using Claude Code's native tools while maintaining the document-centric agent framework approach.
+LLM-OS uses an LLM interpreter that reads markdown specifications and sends them to LLM for interpretation. Instead of simulation, it performs real operations by having LLM interpret markdown agent/tool definitions and execute via TOOL_CALL format.
 
 ## Architecture
 
@@ -11,7 +11,7 @@ LLM-OS uses Claude Code as its runtime engine. Instead of simulation, it perform
 LLM-OS operates in two modes seamlessly:
 
 1. **Training Data Generation Mode**: Pure document simulation for creating fine-tuning datasets
-2. **Execution Mode**: Real tool execution through Claude Code's native capabilities
+2. **Execution Mode**: Real tool execution through LLM interpretation of markdown specifications with TOOL_CALL format
 
 ### Key Components
 
@@ -22,14 +22,14 @@ LLM-OS operates in two modes seamlessly:
 - Provides atomic state transitions
 
 #### 2. Enhanced SystemAgent (`system/SystemAgent.md`)
-- Orchestrates execution using Claude Code tools
-- Manages state transitions
-- Handles error recovery and adaptation
-- Supports both simulation and real execution modes
+- Orchestrates execution through LLM interpretation of markdown tools
+- Manages state transitions via modular state files
+- Handles error recovery and adaptation through constraint evolution
+- Supports both simulation and real execution modes via TOOL_CALL format
 
 #### 3. Real Tool Mapping (`system/ClaudeCodeToolMap.md`)
-- Maps abstract framework tools to Claude Code native tools
-- Defines cost, latency, and side-effect metadata
+- Maps abstract framework tools to real CLI tools and commands
+- Defines cost, latency, and side-effect metadata for LLM execution
 - Enables intelligent tool selection
 
 #### 4. Training Data Generator (`system/TrainingDataCollector.md`)

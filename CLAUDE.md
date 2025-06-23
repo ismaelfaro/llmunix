@@ -7,12 +7,14 @@ This is LLMunix, a Pure Markdown Operating System where everything is either an 
 **CRITICAL: LLMunix is a PURE MARKDOWN framework. Everything is either an agent or tool defined in markdown documents.**
 
 ### Core Principles:
-- **No Code Generation**: System behavior emerges from Claude interpreting markdown documents
-- **Agent/Tool Duality**: Every component is either an agent (decision maker) or tool (executor)
+- **Markdown-Driven Execution**: LLM interpreter reads and sends full markdown specifications to LLM for interpretation and execution
+- **No Code Generation**: System behavior emerges from LLM interpreting markdown documents sent at runtime
+- **Agent/Tool Duality**: Every component is either an agent (decision maker) or tool (executor) defined in markdown
+- **Real Tool Integration**: Markdown components map to actual tool execution via TOOL_CALL format
 - **Sentient State Architecture**: Behavioral constraints evolve dynamically to enable adaptive decision-making
 - **Memory-Driven Learning**: Historical experiences become actionable intelligence for continuous improvement
 - **Dynamic Creation**: New tools/agents are created as markdown specifications during runtime
-- **Claude as Kernel**: Claude Code acts as the OS kernel interpreting markdown system definitions
+- **LLM as Interpreter**: LLM receives and interprets markdown system definitions to achieve any goal
 
 ### Operating Modes:
 1. **EXECUTION MODE**: Real operations using Claude Code's native tools mapped through markdown specs

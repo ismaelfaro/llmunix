@@ -1,13 +1,13 @@
 # LLMunix LLM Interpreter
 
-The **LLM Interpreter** is a standalone runtime engine for LLMunix that provides autonomous execution of markdown-defined agent/tool systems using OpenAI's GPT models.
+The **LLM Interpreter** is a standalone runtime engine for LLMunix that reads markdown specifications and sends them to LLM for interpretation and execution of any task using OpenAI's GPT models.
 
 ## Overview
 
 The LLM Interpreter serves as an alternative runtime to Claude Code, offering:
 
-- **Zero Hardcoded Logic**: All decisions made by LLM reasoning
-- **Pure Markdown Component Parsing**: Robust LLM-based analysis of any markdown component without hardcoded rules
+- **Zero Hardcoded Logic**: All decisions made by LLM interpreting markdown specifications
+- **Pure Markdown Component Parsing**: Interpreter reads and sends full markdown specs to LLM for interpretation
 - **Autonomous Execution**: Complete goal achievement without user intervention  
 - **On-Demand Component Analysis**: Intelligent interpretation of markdown tools/agents when needed
 - **Environment Detection**: Intelligent adaptation to execution environments
@@ -54,8 +54,8 @@ python3 test_llm_interpreter.py
 
 #### LLMunixInterpreter Class
 - **Goal Analysis**: LLM breaks down objectives into executable plans
-- **Pure Markdown Parsing**: Robust LLM-based component analysis without hardcoded rules
-- **On-Demand Component Interpretation**: Analyzes markdown tools/agents when needed
+- **Pure Markdown Parsing**: Reads and sends full markdown specifications to LLM for interpretation
+- **On-Demand Component Interpretation**: Loads markdown tools/agents and sends to LLM when needed
 - **Environment Adaptation**: Detects available tools and adjusts execution  
 - **Autonomous Execution**: Iterative LLM-driven action selection and execution
 - **State Management**: Maintains modular execution state across iterations
@@ -79,7 +79,7 @@ python3 test_llm_interpreter.py
 3. **Component Discovery**: Lightweight discovery of all markdown files in the system
 4. **LLM Planning**: GPT model analyzes goal and creates execution strategy
 5. **Iterative Execution**: LLM decides next actions and executes them
-6. **On-Demand Component Analysis**: When markdown components are called, LLM analyzes their specifications
+6. **On-Demand Component Analysis**: When markdown components are called, interpreter reads and sends their specifications to LLM
 7. **State Tracking**: Complete execution history maintained in modular files
 8. **Error Recovery**: LLM adapts to failures and continues toward goal
 9. **Completion Summary**: Final results and artifacts documented
@@ -259,10 +259,10 @@ The interpreter includes intelligent error recovery:
 ## Advanced Features
 
 ### Pure Markdown Component System
-The interpreter now features **robust LLM-based component parsing** that understands any markdown component:
+The interpreter features **markdown-driven execution** where LLM interprets any markdown component:
 
-- **Zero Hardcoded Rules**: LLM analyzes markdown files to understand their purpose and structure
-- **On-Demand Analysis**: Components are analyzed only when needed, avoiding startup delays
+- **Zero Hardcoded Rules**: Interpreter reads and sends markdown files to LLM for interpretation
+- **On-Demand Analysis**: Markdown specifications sent to LLM only when components are called
 - **Intelligent Recognition**: Flexible pattern matching for component names and capabilities
 - **Automatic Discovery**: Finds all markdown components across the system
 
