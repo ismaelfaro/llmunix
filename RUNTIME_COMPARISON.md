@@ -8,6 +8,7 @@ LLMunix provides **two powerful runtime engines** that execute identical markdow
 |--------|-------------------|-----------------|
 | **Execution Style** | Interactive dialogue | Autonomous |
 | **Decision Making** | Claude's native intelligence | GPT-4 with zero hardcoded logic |
+| **Component Parsing** | Claude's built-in understanding | **Robust LLM-based markdown analysis** |
 | **User Interaction** | Real-time feedback and clarification | Hands-off execution |
 | **Tool Execution** | Claude Code's native tools | Docker sandbox + real commands |
 | **Environment Detection** | Implicit context awareness | **Explicit environment scanning** |
@@ -31,6 +32,8 @@ LLMunix provides **two powerful runtime engines** that execute identical markdow
 #### LLM Interpreter
 - **Autonomous Execution**: Complete goal achievement without user intervention
 - **LLM Decision Making**: All choices made through GPT model reasoning
+- **Pure Markdown Component Parsing**: Robust LLM-based analysis of any markdown component
+- **On-Demand Component Analysis**: Intelligent interpretation when components are called
 - **Environment Detection**: Explicit scanning and documentation of available tools
 - **Standalone Operation**: Designed for programmatic and batch execution
 - **Zero Hardcoded Logic**: Pure LLM-driven decision making
@@ -266,6 +269,8 @@ chmod +x llmunix-llm
 - **Tool Integration**: Real tool execution capabilities
 
 ### LLM Interpreter Unique Features:
+- **Pure Markdown Component System**: Robust LLM-based analysis of any markdown component without hardcoded rules
+- **On-Demand Component Analysis**: Intelligent interpretation when components are called, avoiding startup delays
 - **Environment Detection**: Automatic tool and OS detection
 - **Programmatic Access**: Python API for integration
 - **Batch Execution**: Multiple goal processing

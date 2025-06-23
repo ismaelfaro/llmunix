@@ -46,14 +46,22 @@ How would you like to refine this goal?
 
 ## Key Features
 
+### Pure Markdown Component System
+- **Robust LLM-based parsing**: Any markdown component can be understood and executed
+- **On-demand analysis**: Components analyzed only when needed for optimal performance
+- **Intelligent recognition**: Flexible pattern matching for component names and types
+- **Zero hardcoded rules**: LLM interprets component specifications dynamically
+
 ### Persistent Environment
 - Docker containers persist across multiple executions within a session
 - Workspace state is maintained between commands
 - Full execution history and context available throughout session
+- Component analysis cache preserved across commands
 
 ### Session Context
 - Last executed goal is remembered for refinement
 - Execution state persists across commands
+- Component registry maintained throughout session
 - Clean resource management on session exit
 
 ### Error Handling
@@ -117,4 +125,6 @@ How would you like to refine this goal?
 ### Integration with LLMunix
 - Full compatibility with existing LLMunix features
 - SystemAgent delegation for all executions
+- Pure markdown component system integration
 - Real tool integration maintained
+- On-demand component analysis for any markdown file

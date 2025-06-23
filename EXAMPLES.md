@@ -1,6 +1,6 @@
 # LLMunix Examples: Adaptive Behavior & Intelligent Memory
 
-This document demonstrates LLMunix's **Adaptive Behavior Management** with behavioral constraint evolution, intelligent memory consultation, and adaptive execution patterns.
+This document demonstrates LLMunix's **Adaptive Behavior Management** with behavioral constraint evolution, intelligent memory consultation, adaptive execution patterns, and **robust LLM-based component parsing**.
 
 ## 🎯 Real-World Validation Experiment
 
@@ -460,9 +460,53 @@ llmunix execute: "Simulate a complete software development team with product own
 - `generate training data from memory experiences` - Historical execution learning datasets
 - `simulate constraint adaptation patterns for [scenario type]` - Behavioral adaptation training
 
+## Pure Markdown Component System Examples
+
+### Automatic Component Discovery and Analysis
+```bash
+# LLM Interpreter automatically discovers and analyzes components
+🔍 Analyzing component: QueryMemoryTool.md
+✅ Found component: Query Memory Tool (TOOL)
+🔍 Analyzing component: RealSummarizationAgent.md  
+✅ Found component: RealSummarizationAgent (AGENT)
+🔧 Components loaded: 26 tools/agents
+```
+
+### On-Demand Component Execution
+```bash
+llmunix execute: "Use QueryMemoryTool to find patterns from past research tasks"
+
+# System automatically:
+# 1. Recognizes QueryMemoryTool as a markdown component
+# 2. Analyzes its specification on-demand
+# 3. Interprets execution logic using LLM
+# 4. Maps to real tools (cat, grep, echo) as needed
+# 5. Returns structured results matching component outputs
+```
+
+### Dynamic Component Creation
+```bash
+llmunix execute: "Create a new specialized tool for analyzing code quality metrics"
+
+# LLM can:
+# - Create new markdown component specifications
+# - Define inputs, outputs, and execution patterns
+# - Implement using real tools automatically
+# - Register for future use
+```
+
+### Flexible Component Recognition
+The system recognizes components through multiple patterns:
+- **Exact matches**: `QueryMemoryTool`, `RealWebFetchTool`
+- **Pattern matching**: `query memory`, `web fetch`, `summarization`
+- **File stem matching**: Any markdown file can become a component
+- **Intelligent inference**: LLM determines component type and capabilities
+
 ## The Sentient State Advantage
 
 LLMunix's revolutionary approach combines:
+- **Pure Markdown Component System**: Zero hardcoded parsing rules, LLM understands any markdown component
+- **On-Demand Analysis**: Components analyzed only when needed for optimal performance
 - **Behavioral Constraint Evolution**: System adapts its behavior based on context, user feedback, and execution events
 - **Intelligent Memory Integration**: Historical experiences actively inform current decision-making
 - **Modular State Architecture**: Atomic state transitions enable precise control and resumability

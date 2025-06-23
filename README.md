@@ -44,7 +44,7 @@ llmunix execute: "Urgent: analyze this legal document for risks in 10 minutes"
 
 LLMunix is an AI-powered operating system that implements **Adaptive Behavior Management** - where system behavior dynamically adapts through evolving behavioral constraints:
 
-- **Pure Markdown Architecture**: All system components are markdown files interpreted by Claude as a functional OS
+- **Pure Markdown Architecture**: All system components are markdown files with robust LLM-based parsing and interpretation
 - **Adaptive State Management**: Behavioral constraints (user sentiment, priorities, error tolerance) evolve during execution
 - **Intelligent Memory System**: Structured, queryable experience database with pattern recognition and adaptive learning
 - **Modular State Architecture**: Specialized state files (plan.md, context.md, constraints.md) for atomic updates
@@ -204,6 +204,8 @@ Watch as LLMunix:
 ✅ **Sentient State Architecture**: Fully implemented with behavioral constraint evolution  
 ✅ **Modular State Management**: Complete workspace/state/ directory structure  
 ✅ **Intelligent Memory System**: Structured experience database with QueryMemoryTool  
+✅ **Pure Markdown Component System**: Robust LLM-based parsing without hardcoded rules  
+✅ **On-Demand Component Analysis**: Intelligent interpretation when components are called  
 ✅ **Real Tool Integration**: Production Claude Code tool mappings with error recovery  
 ✅ **Adaptive Execution**: Dynamic constraint modification based on user feedback and events  
 ✅ **Training Data Pipeline**: Automatic generation from real execution experiences  
