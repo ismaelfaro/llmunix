@@ -78,14 +78,22 @@ class LLMunixInterpreter:
         # Execution context
         self.context: Optional[ExecutionContext] = None
         
-        # Load markdown components registry
-        self.component_registry = self._load_component_registry()
+        # Load markdown components registry (lightweight discovery)
+        self.component_registry = self._discover_component_files()
         
         print(f"🤖 LLMunix LLM Interpreter initialized")
         print(f"📁 LLMunix root: {self.llmunix_root}")
         print(f"🏗️  Workspace: {self.workspace_dir}")
         print(f"🧠 Model: {self.model}")
         print(f"🔧 Components loaded: {len(self.component_registry)} tools/agents")
+        
+        # Show discovered components for debugging
+        if self.component_registry:
+            print("📋 Discovered components:")
+            for key, comp in self.component_registry.items():
+                comp_type = comp.get('type', 'UNKNOWN')
+                comp_name = comp.get('name', key)
+                print(f"   • {comp_name} ({comp_type})")
     
     def boot(self):
         """Boot LLMunix operating system"""
@@ -600,23 +608,34 @@ Continue execution according to the SystemAgent specification. If you need to ex
         return result
     
     def _is_markdown_component(self, command: str) -> bool:
-        """Check if a command refers to a markdown component"""
-        # Check if command matches any component in registry
-        for comp_data in self.component_registry.values():
-            comp_name = comp_data.get('name', '').replace('[REAL]', '').replace('[SIMULATION]', '').strip()
-            if (comp_name == command or 
-                comp_data.get('id') == command or 
-                command in comp_data.get('name', '') or
-                command.lower().replace('tool', '').replace('agent', '') in comp_name.lower()):
-                return True
+        """Check if a command refers to a markdown component with on-demand analysis"""
         
-        # Common markdown component name patterns
-        markdown_patterns = [
+        # First check against known component patterns
+        common_component_patterns = [
             'QueryMemoryTool', 'RealWebFetchTool', 'RealFileSystemTool', 'RealSummarizationAgent',
-            'MemoryAnalysisAgent', 'WebFetcherTool', 'SummarizationAgent', 'FileWriterTool'
+            'MemoryAnalysisAgent', 'WebFetcherTool', 'SummarizationAgent', 'FileWriterTool',
+            'SystemAgent', 'LLMInterpreterWebFetchTool'
         ]
         
-        return command in markdown_patterns
+        if command in common_component_patterns:
+            return True
+        
+        # Check against file stems (component names)
+        for comp_data in self.component_registry.values():
+            file_stem = comp_data.get('file_stem', '')
+            
+            # Direct matches
+            if (command == file_stem or 
+                command.lower() == file_stem.lower()):
+                return True
+            
+            # Partial matches for common component naming patterns
+            if (any(keyword in command.lower() for keyword in ['tool', 'agent']) and
+                any(keyword in file_stem.lower() for keyword in ['tool', 'agent']) and
+                (command.lower() in file_stem.lower() or file_stem.lower() in command.lower())):
+                return True
+        
+        return False
     
     def _execute_curl(self, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
         """Execute curl command to fetch web content"""
@@ -809,115 +828,193 @@ Continue execution according to the SystemAgent specification. If you need to ex
         
         return '\n'.join(formatted)
 
-    def _load_component_registry(self) -> Dict[str, Dict]:
-        """Load all markdown components from the system"""
+    def _discover_component_files(self) -> Dict[str, Dict]:
+        """Lightweight discovery of markdown files without LLM analysis"""
         registry = {}
         
-        # Load SmartLibrary registry
-        smart_library_path = self.llmunix_root / "system" / "SmartLibrary.md"
-        if smart_library_path.exists():
-            registry.update(self._parse_smart_library(smart_library_path))
+        # Discover all markdown files
+        md_files = []
         
-        # Discover components in directories
+        # Components directory (most likely to contain components)
         components_dir = self.llmunix_root / "components"
         if components_dir.exists():
-            registry.update(self._discover_components(components_dir))
+            md_files.extend(components_dir.rglob("*.md"))
+        
+        # System directory
+        system_dir = self.llmunix_root / "system"
+        if system_dir.exists():
+            md_files.extend(system_dir.glob("*.md"))
+        
+        # Create basic registry entries for all markdown files
+        for md_file in md_files:
+            file_key = md_file.stem
+            registry[file_key] = {
+                'file_stem': file_key,
+                'full_path': str(md_file),
+                'relative_path': str(md_file.relative_to(self.llmunix_root)),
+                'analyzed': False  # Will be analyzed on-demand
+            }
         
         return registry
     
-    def _parse_smart_library(self, library_path: Path) -> Dict[str, Dict]:
-        """Parse SmartLibrary.md to extract component metadata"""
+    def _load_component_registry(self) -> Dict[str, Dict]:
+        """Load all markdown components using LLM analysis"""
         registry = {}
+        
+        # Discover all markdown files in the system
+        md_files = []
+        
+        # System directory
+        system_dir = self.llmunix_root / "system"
+        if system_dir.exists():
+            md_files.extend(system_dir.glob("*.md"))
+        
+        # Components directory (recursive)
+        components_dir = self.llmunix_root / "components"
+        if components_dir.exists():
+            md_files.extend(components_dir.rglob("*.md"))
+        
+        # Scenarios directory
+        scenarios_dir = self.llmunix_root / "scenarios"
+        if scenarios_dir.exists():
+            md_files.extend(scenarios_dir.glob("*.md"))
+        
+        # Prioritize likely component files for analysis
+        component_files = []
+        other_files = []
+        
+        for md_file in md_files:
+            # Prioritize files in components/ directory and with component-like names
+            if ('components' in str(md_file) or 
+                any(keyword in md_file.stem.lower() for keyword in ['tool', 'agent', 'query', 'real', 'fetch', 'memory'])):
+                component_files.append(md_file)
+            else:
+                other_files.append(md_file)
+        
+        # Analyze component files first (likely to be actual components)
+        for md_file in component_files[:8]:  # Limit to first 8 to avoid timeout
+            try:
+                print(f"🔍 Analyzing component: {md_file.name}")
+                component_info = self._analyze_markdown_file(md_file)
+                if component_info and component_info.get('is_component'):
+                    file_key = md_file.stem
+                    registry[file_key] = component_info
+                    print(f"✅ Found component: {component_info.get('name', file_key)}")
+            except Exception as e:
+                print(f"⚠️  Error analyzing {md_file}: {e}")
+        
+        # Analyze a few other files if we have capacity
+        for md_file in other_files[:3]:  # Limit to 3 others
+            try:
+                component_info = self._analyze_markdown_file(md_file)
+                if component_info and component_info.get('is_component'):
+                    file_key = md_file.stem
+                    registry[file_key] = component_info
+            except Exception as e:
+                print(f"⚠️  Error analyzing {md_file}: {e}")
+        
+        return registry
+    
+    def _analyze_markdown_file(self, md_file: Path) -> Dict[str, Any]:
+        """Use LLM to analyze a markdown file and determine if it's a component"""
         
         try:
-            content = library_path.read_text(encoding='utf-8')
+            content = md_file.read_text(encoding='utf-8')
             
-            # Extract component entries (basic parsing)
-            lines = content.split('\n')
-            current_component = {}
+            # Skip very large files to avoid token limits
+            if len(content) > 10000:
+                content = content[:10000] + "\n...[truncated]"
             
-            for line in lines:
-                line = line.strip()
-                if line.startswith('- **id**:'):
-                    if current_component:
-                        registry[current_component.get('id', '')] = current_component
-                    current_component = {'id': line.split('`')[1] if '`' in line else ''}
-                elif line.startswith('- **name**:'):
-                    current_component['name'] = line.split(': ')[1] if ': ' in line else ''
-                elif line.startswith('- **file_path**:'):
-                    current_component['file_path'] = line.split('`')[1] if '`' in line else ''
-                elif line.startswith('- **record_type**:'):
-                    current_component['type'] = line.split(': ')[1] if ': ' in line else ''
-                elif line.startswith('- **claude_tool**:'):
-                    current_component['claude_tools'] = line.split(': ')[1] if ': ' in line else ''
-                elif line.startswith('- **command_tool**:'):
-                    current_component['command_tools'] = line.split(': ')[1] if ': ' in line else ''
-                elif line.startswith('- **description**:'):
-                    current_component['description'] = line.split(': ')[1] if ': ' in line else ''
+            analysis_prompt = f"""Analyze this markdown file to determine if it defines a LLMunix component (tool or agent).
+
+FILE PATH: {md_file}
+FILE CONTENT:
+{content}
+
+ANALYSIS INSTRUCTIONS:
+1. Determine if this file defines a reusable component (tool or agent)
+2. Extract key information about the component
+3. Identify what type of component it is
+4. Look for execution patterns, inputs, outputs, and capabilities
+
+Respond with JSON in this exact format:
+```json
+{{
+  "is_component": true/false,
+  "name": "component name",
+  "type": "TOOL|AGENT|SYSTEM|SCENARIO|OTHER",
+  "description": "brief description",
+  "inputs": ["list", "of", "input", "parameters"],
+  "outputs": ["list", "of", "output", "parameters"],
+  "capabilities": ["list", "of", "capabilities"],
+  "execution_pattern": "how this component works",
+  "real_tools_used": ["list", "of", "real", "tools", "it", "uses"],
+  "file_path": "{md_file}",
+  "callable_names": ["possible", "names", "to", "call", "this", "component"]
+}}
+```
+
+Be strict about is_component - only return true for files that define reusable, executable components."""
             
-            # Add last component
-            if current_component and current_component.get('id'):
-                registry[current_component['id']] = current_component
-                
+            response = self._call_llm(analysis_prompt, max_tokens=1000)
+            
+            # Extract JSON from response
+            json_start = response.find('```json')
+            if json_start != -1:
+                json_start += 7
+                json_end = response.find('```', json_start)
+                if json_end != -1:
+                    json_str = response[json_start:json_end].strip()
+                    result = json.loads(json_str)
+                    
+                    # Add file metadata
+                    result['full_path'] = str(md_file)
+                    result['relative_path'] = str(md_file.relative_to(self.llmunix_root))
+                    result['file_stem'] = md_file.stem
+                    
+                    return result
+            
+            # Fallback if JSON parsing fails
+            return {
+                'is_component': False,
+                'error': 'Failed to parse LLM analysis',
+                'full_path': str(md_file)
+            }
+            
         except Exception as e:
-            print(f"⚠️  Error parsing SmartLibrary: {e}")
-        
-        return registry
-    
-    def _discover_components(self, components_dir: Path) -> Dict[str, Dict]:
-        """Discover markdown components in components directory"""
-        registry = {}
-        
-        for md_file in components_dir.rglob('*.md'):
-            try:
-                relative_path = md_file.relative_to(self.llmunix_root)
-                component_name = md_file.stem
-                
-                # Determine type from path
-                component_type = 'UNKNOWN'
-                if 'tools' in md_file.parts:
-                    component_type = 'TOOL'
-                elif 'agents' in md_file.parts:
-                    component_type = 'AGENT'
-                
-                registry[component_name] = {
-                    'id': component_name,
-                    'name': component_name,
-                    'file_path': str(relative_path),
-                    'type': component_type,
-                    'full_path': str(md_file)
-                }
-                
-            except Exception as e:
-                print(f"⚠️  Error discovering component {md_file}: {e}")
-        
-        return registry
+            return {
+                'is_component': False,
+                'error': str(e),
+                'full_path': str(md_file)
+            }
     
     def _execute_markdown_component(self, component_name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a markdown-defined component using LLM interpretation"""
         
-        # Find component in registry
+        # Find component file by name matching
         component = None
         for comp_data in self.component_registry.values():
-            if (comp_data.get('name', '').replace('[REAL]', '').replace('[SIMULATION]', '').strip() == component_name or
-                comp_data.get('id') == component_name or
-                component_name in comp_data.get('name', '')):
+            file_stem = comp_data.get('file_stem', '')
+            
+            # Check various matching patterns
+            if (component_name == file_stem or 
+                component_name.lower() == file_stem.lower() or
+                (any(keyword in component_name.lower() for keyword in ['tool', 'agent']) and
+                 any(keyword in file_stem.lower() for keyword in ['tool', 'agent']) and
+                 (component_name.lower() in file_stem.lower() or file_stem.lower() in component_name.lower()))):
                 component = comp_data
                 break
         
         if not component:
             return {
                 'success': False,
-                'error': f"Component '{component_name}' not found in registry",
+                'error': f"Component '{component_name}' not found. Available: {list(self.component_registry.keys())}",
                 'output': ''
             }
         
         # Load component specification
         try:
-            if 'full_path' in component:
-                component_path = Path(component['full_path'])
-            else:
-                component_path = self.llmunix_root / component.get('file_path', '')
+            component_path = Path(component['full_path'])
             
             if not component_path.exists():
                 return {
@@ -927,6 +1024,14 @@ Continue execution according to the SystemAgent specification. If you need to ex
                 }
             
             component_spec = component_path.read_text(encoding='utf-8')
+            
+            # Analyze component on-demand if not already analyzed
+            if not component.get('analyzed', False):
+                print(f"🔍 On-demand analysis of: {component_name}")
+                analyzed_data = self._analyze_markdown_file(component_path)
+                if analyzed_data:
+                    component.update(analyzed_data)
+                    component['analyzed'] = True
             
             # Execute component using LLM interpretation
             return self._interpret_and_execute_component(component_spec, component, inputs)
@@ -941,17 +1046,21 @@ Continue execution according to the SystemAgent specification. If you need to ex
     def _interpret_and_execute_component(self, spec: str, component: Dict, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Use LLM to interpret markdown specification and execute with real tools"""
         
-        # Build execution prompt
+        # Build execution prompt using LLM-analyzed metadata
         prompt = f"""You are executing a LLMunix component. Your task is to interpret the markdown specification and execute it using real tools.
 
 COMPONENT SPECIFICATION:
 {spec}
 
-COMPONENT METADATA:
+LLM-ANALYZED COMPONENT METADATA:
 - Name: {component.get('name', 'Unknown')}
 - Type: {component.get('type', 'Unknown')}
-- Claude Tools: {component.get('claude_tools', 'Unknown')}
-- Command Tools: {component.get('command_tools', 'Unknown')}
+- Description: {component.get('description', 'No description')}
+- Capabilities: {', '.join(component.get('capabilities', []))}
+- Expected Inputs: {', '.join(component.get('inputs', []))}
+- Expected Outputs: {', '.join(component.get('outputs', []))}
+- Execution Pattern: {component.get('execution_pattern', 'Not specified')}
+- Real Tools Used: {', '.join(component.get('real_tools_used', []))}
 
 INPUT PARAMETERS:
 {json.dumps(inputs, indent=2)}
@@ -965,10 +1074,11 @@ AVAILABLE REAL TOOLS:
 {self._get_available_cli_tools()}
 
 INSTRUCTIONS:
-1. Read and understand the component specification
-2. Interpret the logic for the given inputs
-3. Execute the required steps using real tools (TOOL_CALL format)
-4. Return structured output matching the component's output specification
+1. Read and understand the component specification and its analyzed metadata
+2. Follow the execution pattern described in the metadata
+3. Use the expected inputs and produce the expected outputs
+4. Execute the required steps using real tools (TOOL_CALL format)
+5. Leverage the real tools identified in the metadata analysis
 
 You can use these real tools:
 - curl: For web requests
@@ -977,6 +1087,7 @@ You can use these real tools:
 - echo: For creating simple content
 - grep: For searching content
 - mkdir: For creating directories
+- ls: For listing files
 
 Use the TOOL_CALL format when you need to execute tools:
 
@@ -984,12 +1095,12 @@ TOOL_CALL: command_name
 PARAMETERS: param1=value1, param2=value2
 REASONING: Why you need this tool
 
-After all tool executions, provide a final JSON result in this format:
+After all tool executions, provide a final JSON result matching the component's output specification:
 ```json
 {{
   "success": true,
-  "output": "main result content",
-  "metadata": {{"execution_time": "...", "tools_used": [...]}},
+  "output": "main result content based on component outputs: {', '.join(component.get('outputs', []))}",
+  "metadata": {{"execution_time": "...", "tools_used": [...], "component_type": "{component.get('type', 'Unknown')}"}},
   "error": null
 }}
 ```"""
