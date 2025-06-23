@@ -366,7 +366,7 @@ class LLMunixInterpreter:
         execution_context = self._build_full_execution_context()
         
         # Start agentic execution loop
-        max_iterations = 10
+        max_iterations = int(os.getenv('MAX_ITERATIONS', 10))
         iteration = 0
         
         while iteration < max_iterations:
@@ -388,8 +388,8 @@ class LLMunixInterpreter:
             # Update execution context with results
             execution_context = self._update_execution_context(execution_context, response, tool_results)
             
-            # Check if execution is complete
-            if self._is_execution_complete(response, tool_results):
+            # Let SystemAgent decide if execution is complete via its response
+            if "EXECUTION_COMPLETE" in response or "TASK_COMPLETE" in response:
                 print("✅ Execution completed successfully")
                 break
             
@@ -753,20 +753,6 @@ Continue execution according to the SystemAgent specification. If you need to ex
         
         return context
     
-    def _is_execution_complete(self, response: str, tool_results: List[Dict]) -> bool:
-        """Check if execution is complete"""
-        completion_indicators = [
-            'task completed', 'execution complete', 'goal achieved',
-            'summary saved', 'process finished', 'done'
-        ]
-        
-        response_lower = response.lower()
-        has_completion_text = any(indicator in response_lower for indicator in completion_indicators)
-        
-        # Also check if recent tool results indicate completion
-        recent_success = len(tool_results) > 0 and all(r['success'] for r in tool_results[-3:])
-        
-        return has_completion_text or (recent_success and 'summary' in response_lower)
     
     def _update_state_with_context(self, context: Dict[str, Any]):
         """Update state files with current context"""
