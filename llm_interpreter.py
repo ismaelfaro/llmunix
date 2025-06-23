@@ -78,10 +78,14 @@ class LLMunixInterpreter:
         # Execution context
         self.context: Optional[ExecutionContext] = None
         
+        # Load markdown components registry
+        self.component_registry = self._load_component_registry()
+        
         print(f"🤖 LLMunix LLM Interpreter initialized")
         print(f"📁 LLMunix root: {self.llmunix_root}")
         print(f"🏗️  Workspace: {self.workspace_dir}")
         print(f"🧠 Model: {self.model}")
+        print(f"🔧 Components loaded: {len(self.component_registry)} tools/agents")
     
     def boot(self):
         """Boot LLMunix operating system"""
@@ -545,7 +549,7 @@ Continue execution according to the SystemAgent specification. If you need to ex
         return params
     
     def _execute_tool_call(self, tool_call: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute a tool call in the container or host system"""
+        """Execute a tool call - either CLI command or markdown component"""
         command = tool_call['command']
         params = tool_call['parameters']
         
@@ -560,6 +564,25 @@ Continue execution according to the SystemAgent specification. If you need to ex
         }
         
         try:
+            # First, check if this is a markdown component
+            if self._is_markdown_component(command):
+                print(f"🔧 Executing markdown component: {command}")
+                markdown_result = self._execute_markdown_component(command, params)
+                
+                # Convert markdown result to tool result format
+                result['success'] = markdown_result.get('success', False)
+                result['output'] = markdown_result.get('output', '')
+                result['error'] = markdown_result.get('error', '')
+                result['metadata'] = markdown_result.get('metadata', {})
+                
+                if result['success']:
+                    print(f"✅ Markdown component '{command}' executed successfully")
+                else:
+                    print(f"❌ Markdown component '{command}' failed: {result['error']}")
+                
+                return result
+            
+            # Otherwise, execute as CLI command
             if command == 'curl':
                 result = self._execute_curl(params, result)
             elif command == 'python3':
@@ -575,6 +598,25 @@ Continue execution according to the SystemAgent specification. If you need to ex
             print(f"❌ Tool execution failed: {e}")
         
         return result
+    
+    def _is_markdown_component(self, command: str) -> bool:
+        """Check if a command refers to a markdown component"""
+        # Check if command matches any component in registry
+        for comp_data in self.component_registry.values():
+            comp_name = comp_data.get('name', '').replace('[REAL]', '').replace('[SIMULATION]', '').strip()
+            if (comp_name == command or 
+                comp_data.get('id') == command or 
+                command in comp_data.get('name', '') or
+                command.lower().replace('tool', '').replace('agent', '') in comp_name.lower()):
+                return True
+        
+        # Common markdown component name patterns
+        markdown_patterns = [
+            'QueryMemoryTool', 'RealWebFetchTool', 'RealFileSystemTool', 'RealSummarizationAgent',
+            'MemoryAnalysisAgent', 'WebFetcherTool', 'SummarizationAgent', 'FileWriterTool'
+        ]
+        
+        return command in markdown_patterns
     
     def _execute_curl(self, params: Dict[str, str], result: Dict[str, Any]) -> Dict[str, Any]:
         """Execute curl command to fetch web content"""
@@ -741,7 +783,11 @@ Continue execution according to the SystemAgent specification. If you need to ex
         
         formatted = []
         for i, step in enumerate(history[-3:], 1):  # Show last 3 steps
-            formatted.append(f"Step {i}: {step['response'][:200]}...")
+            response = step.get('response', '')
+            if isinstance(response, str):
+                formatted.append(f"Step {i}: {response[:200]}...")
+            else:
+                formatted.append(f"Step {i}: {str(response)[:200]}...")
         
         return '\n'.join(formatted)
     
@@ -752,10 +798,251 @@ Continue execution according to the SystemAgent specification. If you need to ex
         
         formatted = []
         for result in results[-5:]:  # Show last 5 results
-            status = "✅" if result['success'] else "❌"
-            formatted.append(f"{status} {result['tool']}: {result['output'][:100]}...")
+            status = "✅" if result.get('success') else "❌"
+            tool_name = result.get('tool', 'unknown')
+            output = result.get('output', '')
+            if isinstance(output, str):
+                output_preview = output[:100]
+            else:
+                output_preview = str(output)[:100]
+            formatted.append(f"{status} {tool_name}: {output_preview}...")
         
         return '\n'.join(formatted)
+
+    def _load_component_registry(self) -> Dict[str, Dict]:
+        """Load all markdown components from the system"""
+        registry = {}
+        
+        # Load SmartLibrary registry
+        smart_library_path = self.llmunix_root / "system" / "SmartLibrary.md"
+        if smart_library_path.exists():
+            registry.update(self._parse_smart_library(smart_library_path))
+        
+        # Discover components in directories
+        components_dir = self.llmunix_root / "components"
+        if components_dir.exists():
+            registry.update(self._discover_components(components_dir))
+        
+        return registry
+    
+    def _parse_smart_library(self, library_path: Path) -> Dict[str, Dict]:
+        """Parse SmartLibrary.md to extract component metadata"""
+        registry = {}
+        
+        try:
+            content = library_path.read_text(encoding='utf-8')
+            
+            # Extract component entries (basic parsing)
+            lines = content.split('\n')
+            current_component = {}
+            
+            for line in lines:
+                line = line.strip()
+                if line.startswith('- **id**:'):
+                    if current_component:
+                        registry[current_component.get('id', '')] = current_component
+                    current_component = {'id': line.split('`')[1] if '`' in line else ''}
+                elif line.startswith('- **name**:'):
+                    current_component['name'] = line.split(': ')[1] if ': ' in line else ''
+                elif line.startswith('- **file_path**:'):
+                    current_component['file_path'] = line.split('`')[1] if '`' in line else ''
+                elif line.startswith('- **record_type**:'):
+                    current_component['type'] = line.split(': ')[1] if ': ' in line else ''
+                elif line.startswith('- **claude_tool**:'):
+                    current_component['claude_tools'] = line.split(': ')[1] if ': ' in line else ''
+                elif line.startswith('- **command_tool**:'):
+                    current_component['command_tools'] = line.split(': ')[1] if ': ' in line else ''
+                elif line.startswith('- **description**:'):
+                    current_component['description'] = line.split(': ')[1] if ': ' in line else ''
+            
+            # Add last component
+            if current_component and current_component.get('id'):
+                registry[current_component['id']] = current_component
+                
+        except Exception as e:
+            print(f"⚠️  Error parsing SmartLibrary: {e}")
+        
+        return registry
+    
+    def _discover_components(self, components_dir: Path) -> Dict[str, Dict]:
+        """Discover markdown components in components directory"""
+        registry = {}
+        
+        for md_file in components_dir.rglob('*.md'):
+            try:
+                relative_path = md_file.relative_to(self.llmunix_root)
+                component_name = md_file.stem
+                
+                # Determine type from path
+                component_type = 'UNKNOWN'
+                if 'tools' in md_file.parts:
+                    component_type = 'TOOL'
+                elif 'agents' in md_file.parts:
+                    component_type = 'AGENT'
+                
+                registry[component_name] = {
+                    'id': component_name,
+                    'name': component_name,
+                    'file_path': str(relative_path),
+                    'type': component_type,
+                    'full_path': str(md_file)
+                }
+                
+            except Exception as e:
+                print(f"⚠️  Error discovering component {md_file}: {e}")
+        
+        return registry
+    
+    def _execute_markdown_component(self, component_name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute a markdown-defined component using LLM interpretation"""
+        
+        # Find component in registry
+        component = None
+        for comp_data in self.component_registry.values():
+            if (comp_data.get('name', '').replace('[REAL]', '').replace('[SIMULATION]', '').strip() == component_name or
+                comp_data.get('id') == component_name or
+                component_name in comp_data.get('name', '')):
+                component = comp_data
+                break
+        
+        if not component:
+            return {
+                'success': False,
+                'error': f"Component '{component_name}' not found in registry",
+                'output': ''
+            }
+        
+        # Load component specification
+        try:
+            if 'full_path' in component:
+                component_path = Path(component['full_path'])
+            else:
+                component_path = self.llmunix_root / component.get('file_path', '')
+            
+            if not component_path.exists():
+                return {
+                    'success': False,
+                    'error': f"Component file not found: {component_path}",
+                    'output': ''
+                }
+            
+            component_spec = component_path.read_text(encoding='utf-8')
+            
+            # Execute component using LLM interpretation
+            return self._interpret_and_execute_component(component_spec, component, inputs)
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'error': f"Error loading component: {e}",
+                'output': ''
+            }
+    
+    def _interpret_and_execute_component(self, spec: str, component: Dict, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Use LLM to interpret markdown specification and execute with real tools"""
+        
+        # Build execution prompt
+        prompt = f"""You are executing a LLMunix component. Your task is to interpret the markdown specification and execute it using real tools.
+
+COMPONENT SPECIFICATION:
+{spec}
+
+COMPONENT METADATA:
+- Name: {component.get('name', 'Unknown')}
+- Type: {component.get('type', 'Unknown')}
+- Claude Tools: {component.get('claude_tools', 'Unknown')}
+- Command Tools: {component.get('command_tools', 'Unknown')}
+
+INPUT PARAMETERS:
+{json.dumps(inputs, indent=2)}
+
+EXECUTION CONTEXT:
+- Workspace: {self.workspace_dir}
+- State Directory: {self.state_dir}
+- Container: {self.context.container_name if self.context else 'None'}
+
+AVAILABLE REAL TOOLS:
+{self._get_available_cli_tools()}
+
+INSTRUCTIONS:
+1. Read and understand the component specification
+2. Interpret the logic for the given inputs
+3. Execute the required steps using real tools (TOOL_CALL format)
+4. Return structured output matching the component's output specification
+
+You can use these real tools:
+- curl: For web requests
+- python3: For data processing
+- cat: For reading files
+- echo: For creating simple content
+- grep: For searching content
+- mkdir: For creating directories
+
+Use the TOOL_CALL format when you need to execute tools:
+
+TOOL_CALL: command_name
+PARAMETERS: param1=value1, param2=value2
+REASONING: Why you need this tool
+
+After all tool executions, provide a final JSON result in this format:
+```json
+{{
+  "success": true,
+  "output": "main result content",
+  "metadata": {{"execution_time": "...", "tools_used": [...]}},
+  "error": null
+}}
+```"""
+
+        # Get LLM response for component execution
+        response = self._call_llm(prompt, max_tokens=3000)
+        
+        # Extract and execute any tool calls
+        tool_results = self._extract_and_execute_tools(response)
+        
+        # Parse final JSON result from response
+        final_result = self._extract_final_result(response, tool_results)
+        
+        return final_result
+    
+    def _extract_final_result(self, response: str, tool_results: List[Dict]) -> Dict[str, Any]:
+        """Extract the final JSON result from LLM response"""
+        
+        # Look for JSON block in response
+        try:
+            # Find JSON block
+            json_start = response.find('```json')
+            if json_start != -1:
+                json_start += 7  # Skip ```json
+                json_end = response.find('```', json_start)
+                if json_end != -1:
+                    json_str = response[json_start:json_end].strip()
+                    result = json.loads(json_str)
+                    
+                    # Add tool execution metadata
+                    if 'metadata' not in result:
+                        result['metadata'] = {}
+                    result['metadata']['tool_executions'] = len(tool_results)
+                    result['metadata']['successful_tools'] = sum(1 for r in tool_results if r.get('success'))
+                    
+                    return result
+        except Exception as e:
+            print(f"⚠️  Error parsing JSON result: {e}")
+        
+        # Fallback result if JSON parsing fails
+        success = len(tool_results) == 0 or any(r.get('success') for r in tool_results)
+        output = response if not tool_results else tool_results[-1].get('output', response)
+        
+        return {
+            'success': success,
+            'output': output,
+            'metadata': {
+                'tool_executions': len(tool_results),
+                'successful_tools': sum(1 for r in tool_results if r.get('success')),
+                'fallback_parsing': True
+            },
+            'error': None if success else 'Component execution may have failed'
+        }
 
     # Utility methods
     

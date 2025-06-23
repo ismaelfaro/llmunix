@@ -93,6 +93,7 @@ This file is the central registry for all components available to the SystemAgen
 -   **tags**: [memory, query, bridge, learning, real, claude-code]
 -   **applicability_text**: "Use during planning and error recovery to consult past experiences. Provides actionable insights for constraint adaptation, component selection, and strategy optimization based on historical performance."
 
+
 ---
 -   **id**: `agent_simulated_finetuned_v1`
 -   **name**: SimulatedFineTunedAgent [SIMULATION]
