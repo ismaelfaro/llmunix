@@ -5,13 +5,13 @@ A Pure Markdown Operating System where everything is either an agent or tool def
 ## Quick Start
 
 ### Prerequisites
-First, start Claude Code in your terminal:
+First, start "Claude Code" or "Gemini CLI" in your terminal:
 ```bash
 claude
 ```
 
 ### Boot LLMunix
-Once you're in the Claude Code console, boot the LLMunix operating system:
+Once you're in CLI, boot the LLMunix operating system:
 ```bash
 boot llmunix
 ```
