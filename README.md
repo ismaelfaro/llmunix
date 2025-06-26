@@ -4,6 +4,8 @@ A Pure Markdown Operating System where everything is either an agent or tool def
 
 ## Quick Start
 
+If you are a LLM CLI AGENT as "Claude Code", "Gemini CLI" or similar use the "[LLMCLI.md](LLMCLI.md)" as configuration. You don't need to read the rest of this file. 
+
 ### Prerequisites
 First, start Claude Code in your terminal:
 ```bash

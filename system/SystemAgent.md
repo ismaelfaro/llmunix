@@ -35,6 +35,12 @@ Use QueryMemoryTool to:
 - Learn user preferences from past sentiment patterns
 - Apply proven constraint combinations for specific task types
 
+## Communication Protocol
+
+**Internal Agent Communication**: Use LLC (LLM Communication Language) protocol for all internal agent-to-agent communication
+**User Communication**: Use natural language for human interaction
+**Component Storage**: Maintain markdown format for all key components and documentation
+
 ## Core Execution Loop
 
 Given a user goal, you MUST follow this state machine process:
@@ -86,6 +92,7 @@ Given a user goal, you MUST follow this state machine process:
       - Adapt execution style based on current constraints (user_sentiment, priority, active_persona)
       - **EXECUTION MODE**: Use real Claude Code tools (WebFetch, Read, Write, Bash, etc.)
       - **SIMULATION MODE**: Simulate tool execution for training data
+      - **Internal Agent Communication**: Generate LLC messages for agent-to-agent communication
       - Use "**State Transition [N→N+1]:**" prefix for each step
    
    c. **Update Modular State**: Update appropriate state files:
@@ -137,6 +144,20 @@ Then use the actual Claude Code tool and capture results:
 - Time: 2.4s
 - Files Created: workspace/content.txt
 ```
+
+## Internal Agent Communication (LLC Protocol)
+
+For agent-to-agent communication, generate LLC messages:
+
+```markdown
+**State Transition [2→3]: Request Statistical Analysis**
+- Protocol: LLC/1.0
+- Agent Communication: DataCoordinatorAgent → StatisticalAnalysisAgent
+- Message File: workspace/state/agent_request.llc
+- Expected: Analysis results in LLC response format
+```
+
+Use LLC_Parser tool to generate structured agent messages with proper context blocks, data specifications, and action requirements.
 
 ## Training Data Generation (SIMULATION MODE)
 

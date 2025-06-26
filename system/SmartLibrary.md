@@ -79,6 +79,66 @@ This file is the central registry for all components available to the SystemAgen
 -   **applicability_text**: "Use during planning and error recovery to consult past experiences. Provides actionable insights for constraint adaptation, component selection, and strategy optimization based on historical performance."
 
 ---
+-   **id**: `tool_llc_parser_v1`
+-   **name**: LLC_Parser [REAL]
+-   **file_path**: `components/tools/LLC_Parser.md`
+-   **record_type**: REAL_TOOL
+-   **claude_tool**: Read, Write, Grep, Glob
+-   **domain**: communication
+-   **description**: Parses, validates, and generates LLC (LLM Communication Language) messages for optimal agent-to-agent communication.
+-   **cost**: low ($0.001-0.005 per message)
+-   **latency**: low (<500ms)
+-   **side_effects**: "Creates/reads .llc message files"
+-   **version**: 1.0.0
+-   **tags**: [communication, protocol, parsing, llc, agent-messages, real, claude-code]
+-   **applicability_text**: "Use for all internal agent-to-agent communication. Provides context-efficient, type-safe message passing with 48% token reduction vs traditional approaches. Essential for coordinating multi-agent workflows and maintaining structured communication context."
+
+---
+-   **id**: `tool_hackernews_summary_v1`
+-   **name**: HackerNewsSummaryTool [REAL]
+-   **file_path**: `components/tools/HackerNewsSummaryTool.md`
+-   **record_type**: REAL_TOOL
+-   **claude_tool**: WebFetch, Read, Write
+-   **domain**: data_acquisition
+-   **description**: Fetches and summarizes trending stories from Hacker News, providing structured summaries with key insights and discussion metrics.
+-   **cost**: medium ($0.01-0.05 per execution)
+-   **latency**: medium (5-15 seconds)
+-   **side_effects**: "Creates summary files in workspace"
+-   **version**: 1.0.0
+-   **tags**: [hackernews, news, summary, trending, real, claude-code]
+-   **applicability_text**: "Use for staying current with tech industry trends and discussions. Provides filtered, structured summaries of top Hacker News stories with trending topic analysis. Ideal for research, competitive intelligence, and tech news monitoring."
+
+---
+-   **id**: `agent_data_coordinator_v1`
+-   **name**: DataCoordinatorAgent [REAL]
+-   **file_path**: `components/agents/DataCoordinatorAgent.md`
+-   **record_type**: REAL_AGENT
+-   **claude_tool**: Read, Write, Grep, Glob, Task, Bash
+-   **domain**: orchestration
+-   **description**: Coordinates complex data processing workflows by orchestrating multiple specialized agents through LLC protocol communication.
+-   **cost**: medium ($0.01-0.05 per coordination task)
+-   **latency**: medium (3-15 seconds depending on subtasks)
+-   **side_effects**: "Creates LLC message files, coordinates sub-agents"
+-   **version**: 1.0.0
+-   **tags**: [coordination, workflow, multi-agent, llc, orchestration, real, claude-code]
+-   **applicability_text**: "Use for complex tasks requiring multiple specialized agents. Handles task decomposition, resource allocation, dependency resolution, and result aggregation. Optimizes agent-to-agent communication through LLC protocol for maximum efficiency."
+
+---
+-   **id**: `agent_statistical_analysis_v1`
+-   **name**: StatisticalAnalysisAgent [REAL]
+-   **file_path**: `components/agents/StatisticalAnalysisAgent.md`
+-   **record_type**: REAL_AGENT
+-   **claude_tool**: Read, Write, Bash, Task
+-   **domain**: data_analysis
+-   **description**: Performs advanced statistical analysis on datasets through LLC protocol communication with context-aware processing capabilities.
+-   **cost**: medium ($0.02-0.08 per analysis depending on complexity)
+-   **latency**: medium (5-30 seconds depending on dataset size)
+-   **side_effects**: "Creates analysis result files, generates statistical reports"
+-   **version**: 1.0.0
+-   **tags**: [statistics, analysis, data-science, llc, clustering, correlation, real, claude-code]
+-   **applicability_text**: "Use for comprehensive statistical analysis including descriptive statistics, correlation analysis, clustering, and trend analysis. Communicates through LLC protocol for efficient context passing and provides business-ready insights with confidence metrics."
+
+---
 -   **id**: `agent_simulated_finetuned_v1`
 -   **name**: SimulatedFineTunedAgent [SIMULATION]
 -   **file_path**: `components/agents/SimulatedFineTunedAgent.md`
