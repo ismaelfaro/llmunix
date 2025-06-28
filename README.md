@@ -10,38 +10,39 @@ LLMunix implements a concept called **Adaptive Behavior Management**, where the 
 -   **Manifest-Driven**: The entire OS "firmware" and "system calls" are defined in a single `GEMINI.md` file.
 -   **Adaptive State Management**: The agent modifies its own behavioral constraints in `workspace/state/constraints.md` during execution.
 -   **Intelligent Memory System**: The agent learns from past executions stored in `system/memory_log.md`.
--   **Dynamic Evolution**: The agent can write new Markdown component files to create new tools and agents on the fly when existing ones are insufficient.
+-   **Dynamic Evolution**: The agent can write new Markdown component files to create new tools and agents on the fly.
+
+![LLMunix Demo](./llmunix.gif)
 
 ---
 
 ## Quick Start
 
-The LLMunix workflow is a simple and powerful two-step process.
+The LLMunix workflow is a simple and powerful two-step process that turns Gemini CLI into an autonomous agent for this project.
 
-**1. Boot the System (Run Once)**
+**1. Boot the System (Run Once per Session)**
 
-This deterministic script prepares the workspace. It clears any previous state, ensuring a fresh run.
+This is a deterministic setup script. It clears any previous state and creates the necessary workspace files for the agent. **You must run this before starting a new task.**
 
 ```bash
-# From the llmunix project root:
+# From the root of the llmunix project directory:
 ./llmunix-boot
 ```
+This will prepare the `workspace/` directory.
 
 **2. Execute a Goal**
 
-Now, start the Gemini CLI. It will automatically detect the `GEMINI.md` manifest and become an autonomous agent. Provide your high-level goal directly at the prompt.
+Now, start the Gemini CLI. It will automatically detect the `GEMINI.md` manifest and assume the role of the `SystemAgent`. Provide your high-level goal directly at the prompt.
 
 ```bash
 # Start the Gemini CLI
 gemini
 
-# Give the agent its goal
+# Give the agent its goal at the prompt
 > Monitor 5 tech news sources, extract trending topics, and generate an intelligence briefing.
 ```
 
-The system will now take over, create a plan, and execute it autonomously until the goal is complete.
-
-![LLMunix Demo](./llmunix.gif)
+The system will now take over, create a plan, and execute it autonomously until the goal is complete, evolving its own capabilities if necessary.
 
 ---
 
@@ -49,7 +50,7 @@ The system will now take over, create a plan, and execute it autonomously until 
 
 This repository is a "program" written in Markdown. The `GEMINI.md` file acts as a manifest that transforms the Gemini CLI into a dedicated runtime for LLMunix.
 
-1.  **Boot:** The `./llmunix-boot` script creates a clean `workspace/state` directory.
+1.  **Boot:** The `./llmunix-boot` script creates a clean `workspace/state` directory, preparing the "machine" for the agent.
 2.  **Activation:** When you run `gemini`, it detects `GEMINI.md`, loads the "SystemAgent" firmware, and dynamically registers the virtual tools defined within it.
 3.  **Execution Loop:** When you provide a goal, the agent starts its autonomous loop:
     *   It uses `read_file` to understand its plan and context.
@@ -60,7 +61,7 @@ This repository is a "program" written in Markdown. The `GEMINI.md` file acts as
 
 ### Core Architecture
 
-The architecture is designed for clarity, extensibility, and autonomous operation.
+The architecture is simplified and centered on the manifest and a deterministic boot script.
 
 ```
 llmunix/
@@ -69,7 +70,6 @@ llmunix/
 ├── components/          # A library of pre-built, reusable agents and tools.
 │   ├── agents/
 │   └── tools/
-├── scenarios/           # Example tasks and workflows.
 ├── system/              # Core, non-executable system files.
 │   └── memory_log.md
 └── workspace/           # Ephemeral working directory for a single run.

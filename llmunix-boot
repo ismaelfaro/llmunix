@@ -1,0 +1,21 @@
+#!/bin/bash
+# LLMunix Deterministic Bootloader v1.0
+# This script initializes the workspace for an agentic run.
+
+echo "🚀 Booting LLMunix..."
+# Clean and create the state directory
+rm -rf workspace
+mkdir -p workspace/state
+echo "✅ Cleared and created workspace/state/"
+
+# Initialize all necessary state files with default content.
+echo "# Execution Plan
+**Goal:** System is booted and ready.
+**Status:** READY" > workspace/state/plan.md
+echo "## LLMunix Context" > workspace/state/context.md
+echo "## LLMunix Constraints" > workspace/state/constraints.md
+echo "## LLMunix History" > workspace/state/history.md
+echo "{}" > workspace/state/variables.json
+
+echo "✅ LLMunix has booted successfully. Workspace is ready."
+echo "➡️ Next step: Run 'gemini' and provide your high-level goal."
