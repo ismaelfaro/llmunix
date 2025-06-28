@@ -50,6 +50,8 @@ The system will now take over, create a plan, and execute it autonomously until 
 
 This repository is a "program" written in Markdown. The `GEMINI.md` file acts as a manifest that transforms the Gemini CLI into a dedicated runtime for LLMunix.
 
+![LLMunix boot demo](./llmunix.gif)
+
 1.  **Boot:** The `./llmunix-boot` script creates a clean `workspace/state` directory, preparing the "machine" for the agent.
 2.  **Activation:** When you run `gemini`, it detects `GEMINI.md`, loads the "SystemAgent" firmware, and dynamically registers the virtual tools defined within it.
 3.  **Execution Loop:** When you provide a goal, the agent starts its autonomous loop:
