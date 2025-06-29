@@ -12,8 +12,6 @@ LLMunix implements a concept called **Adaptive Behavior Management**, where the 
 -   **Intelligent Memory System**: The agent learns from past executions stored in `system/memory_log.md`.
 -   **Dynamic Evolution**: The agent can write new Markdown component files to create new tools and agents on the fly.
 
-![LLMunix Demo](./llmunix.gif)
-
 ---
 
 ## Quick Start
@@ -22,13 +20,12 @@ The LLMunix workflow is a simple and powerful two-step process that turns Gemini
 
 **1. Boot the System (Run Once per Session)**
 
-This is a deterministic setup script. It clears any previous state and creates the necessary workspace files for the agent. **You must run this before starting a new task.**
+This deterministic script prepares the workspace. It clears any previous state, ensuring a fresh run.
 
 ```bash
-# From the root of the llmunix project directory:
+# From the llmunix project root:
 ./llmunix-boot
 ```
-This will prepare the `workspace/` directory.
 
 **2. Execute a Goal**
 
@@ -42,28 +39,38 @@ gemini
 > Monitor 5 tech news sources, extract trending topics, and generate an intelligence briefing.
 ```
 
-The system will now take over, create a plan, and execute it autonomously until the goal is complete, evolving its own capabilities if necessary.
+The system will now take over, create a plan, and execute it autonomously until the goal is complete.
 
 ---
 
-## How It Works
+## How It Works: An Agent in Action
 
-This repository is a "program" written in Markdown. The `GEMINI.md` file acts as a manifest that transforms the Gemini CLI into a dedicated runtime for LLMunix.
+This repository is a "program" written in Markdown. The `GEMINI.md` file acts as its "firmware," turning the Gemini CLI into an autonomous agent. The best way to understand it is to see the agent's thought process during a real task.
 
-![LLMunix boot demo](./llmunix.gif)
+**Goal:** *"Monitor 5 tech news sources, extract trending topics, and generate an intelligence briefing."*
 
-1.  **Boot:** The `./llmunix-boot` script creates a clean `workspace/state` directory, preparing the "machine" for the agent.
-2.  **Activation:** When you run `gemini`, it detects `GEMINI.md`, loads the "SystemAgent" firmware, and dynamically registers the virtual tools defined within it.
-3.  **Execution Loop:** When you provide a goal, the agent starts its autonomous loop:
-    *   It uses `read_file` to understand its plan and context.
-    *   It calls tools like `web_fetch` and `summarize` to interact with the world.
-    *   It can invoke pre-built, specialized agents from the `components/agents/` directory using the `run_agent` tool.
-    *   If a required capability is missing, it will use `write_file` to create a new agent or tool in the `components/` directory.
-    *   It uses `write_file` and `append_to_file` to manage its state and log its history.
+The following is a summary of the agent's actual execution trace:
+
+1.  **Planning:** The agent first creates a plan: identify sources, fetch content, analyze topics, and generate a briefing. It writes this to `workspace/state/plan.md`.
+
+2.  **Tool Failure & Recovery:** The agent tries to use the `GoogleSearch` tool to find sources, but it fails due to an API error. The agent doesn't stop. It recovers by creating its own list of reliable sources and saving it to `workspace/state/tech_news_sources.md`.
+
+3.  **Capability Evolution:** The plan requires extracting "trending topics" and creating a "briefing," but the agent recognizes it has no specialized tools for these tasks. It autonomously **evolves its own capabilities** by:
+    *   Generating the complete Markdown definition for a new `TrendingTopicExtractorAgent.md`.
+    *   Generating the complete Markdown definition for a new `IntelligenceBriefingAgent.md`.
+    *   Using the `write_file` tool to save these new agents to the `components/agents/` directory, making them available for future use.
+
+4.  **Tool Confusion & Manual Override:** The agent then attempts to use its newly created agents via the `run_agent` tool. However, it makes a mistake and the command fails (`bash: run_agent: command not found`). After several failed attempts to call the tool correctly, the agent demonstrates a remarkable level of resilience: it decides to **manually perform the logic of the agents itself**. It reads the agent files it just created, understands their logic, and executes the steps manually within its own thought process.
+
+5.  **Completion:** Despite the tool-use errors, the agent successfully extracts the topics, synthesizes the information, and writes the final `intelligence_briefing.md` to the workspace, completing the user's goal.
+
+This entire sequence—planning, recovering from errors, evolving new capabilities, and even working around its own mistakes—is fully autonomous, driven by the instructions in `GEMINI.md`.
+
+![LLMunix Demo](./llmunix.gif)
 
 ### Core Architecture
 
-The architecture is simplified and centered on the manifest and a deterministic boot script.
+The architecture is designed to enable this emergent, intelligent behavior.
 
 ```
 llmunix/
