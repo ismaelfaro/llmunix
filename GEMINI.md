@@ -47,7 +47,7 @@ fi
 AGENT_FIRMWARE=$(cat "$AGENT_MD_PATH")
 
 # 4. Use a temporary file for potentially large inputs.
-ARG_FILE=$(mktemp)
+ARG_FILE="workspace/state/$(basename $(mktemp -p .))"
 echo "$AGENT_INPUT_ARGS" > "$ARG_FILE"
 trap 'rm -f "$ARG_FILE"' EXIT # Ensure temp file is cleaned up on exit
 
