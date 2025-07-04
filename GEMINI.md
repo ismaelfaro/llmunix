@@ -110,7 +110,7 @@ fi
 
 # 3. Load the tool's "source code" and extract JUST the shell script part.
 # This uses `sed` to find the `sh` code block and print its content.
-TOOL_SCRIPT=$(sed -n '/^`sh`$/,/^`json`$/{ /`sh`/d; /`json`/d; p; }' "$TOOL_MD_PATH")
+TOOL_SCRIPT=$(awk '/^```sh$/{flag=1;next}/^```$/{flag=0}flag' "$TOOL_MD_PATH")
 
 if [ -z "$TOOL_SCRIPT" ]; then
     echo "Error: Could not extract shell script from tool definition at '$TOOL_MD_PATH'." >&2

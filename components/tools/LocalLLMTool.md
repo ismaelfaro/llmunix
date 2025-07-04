@@ -28,9 +28,7 @@ if [ $? -ne 0 ]; then
     echo "Error: Failed to connect to Ollama at $OLLAMA_HOST. Is Ollama running and accessible?" >&2
     exit 1
 fi
-OUTPUT_FILE="workspace/$(basename $(mktemp -p .))"
-echo "$RESPONSE" | jq -r .response > "$OUTPUT_FILE"
-echo "$OUTPUT_FILE"
+echo "$RESPONSE" | jq -r .response
 ```
 `json`
 ```json
