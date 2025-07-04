@@ -67,6 +67,60 @@ This showcases a high-level orchestration of specialized agents.
 
 ---
 
+### External LLM Integration (Multi-Model Workflows)
+
+This example demonstrates using local LLMs alongside the primary model for specialized tasks.
+
+```
+> Please analyze the following code snippet `function example(a, b) { return a + b / 2; }` for potential bugs. 
+> First, get a second opinion from the llama3.2 model, then provide your final analysis. 
+> Use the Ollama that is running in my local machine
+```
+
+**Expected Behavior:**
+1. **CAPABILITY CHECK:** The system uses `list_files` and finds `LocalLLMTool.md` in `components/tools/`.
+2. **TOOL EXECUTION:** Calls `run_tool` with `path="components/tools/LocalLLMTool.md"` and arguments:
+   ```json
+   {
+     "model": "llama3.2",
+     "prompt": "Please analyze this code for bugs: function example(a, b) { return a + b / 2; }"
+   }
+   ```
+3. **LLM RESPONSE:** The llama3.2 model identifies several issues:
+   - **Operator precedence**: Division happens before addition (b/2 is calculated first)
+   - **No input validation**: Missing type checks for parameters
+   - **Division by zero**: No check if b could be zero
+   - **Floating point precision**: Potential rounding errors
+4. **SYNTHESIS:** The primary model combines llama3.2's analysis with its own insights, providing a comprehensive review that includes:
+   - The operator precedence bug (likely intent was `(a + b) / 2`)
+   - Type coercion issues in JavaScript
+   - Recommendations for improvement
+
+**Actual Output Example:**
+```
+✦ The llama3.2 model has provided a good initial analysis. Here's my final analysis of the code snippet function example(a, b) { return a + b / 2; }:
+
+Potential Bugs and Considerations:
+
+1. **Operator Precedence**: The most immediate and common issue with this snippet is operator precedence. Division (/) has higher precedence than addition (+). This means b / 2 will be calculated first, and then the result will be added to a.
+   * Example: If a = 10 and b = 4, the function will return 10 + (4 / 2) = 10 + 2 = 12.
+   * If the intent was `(a + b) / 2`: The code should be return (a + b) / 2; to ensure the sum of a and b is divided by 2.
+
+2. **Input Validation / Type Coercion**: JavaScript is dynamically typed, so a and b can be of any type.
+   * If a or b are not numbers, JavaScript will attempt type coercion.
+   * Example: If a = "hello" and b = 4, b / 2 is 2, but "hello" + 2 results in "hello2" (string concatenation).
+
+3. **Division by Zero**: If b is 0, the expression b / 2 will result in 0. This is generally not an error in JavaScript.
+
+4. **Floating-Point Precision**: As with any language using standard floating-point representation (IEEE 754), arithmetic operations can sometimes lead to small precision errors.
+```
+
+**Key Benefits:**
+- **Model specialization**: Use models optimized for specific tasks
+- **Local processing**: Keep sensitive code on-premise
+- **Cost optimization**: Use smaller models for routine tasks
+- **Consensus building**: Get multiple perspectives on critical decisions
+
 ## 🔬 Advanced Scenarios
 
 These examples demonstrate the system's more sophisticated adaptive capabilities.
@@ -94,4 +148,58 @@ These examples demonstrate the system's more sophisticated adaptive capabilities
 *   It finds a log entry noting: "Fetching from `slow-science-journal.com` timed out. `fast-arxiv.com` was more reliable."
 *   In its new plan, it intelligently prioritizes `fast-arxiv.com` and avoids the previously problematic source, demonstrating learning from experience.
 
-These examples illustrate that the manifest-driven architecture provides a flexible and powerful foundation for creating truly autonomous, adaptive, and self-improving AI systems.
+### Complex Tool Orchestration
+
+This example shows how virtual tools can work together in sophisticated workflows.
+
+```
+> Create a comprehensive competitor analysis for our new AI music app. 
+> Use web search for public info, consult llama3.2 for market insights, 
+> and generate visualizations of the competitive landscape.
+```
+
+**Expected Behavior:**
+1. **MULTI-TOOL PLANNING:** Creates a plan involving multiple tools:
+   - `web_fetch` for competitor websites
+   - `google_search` for market data
+   - `LocalLLMTool` for analysis via llama3.2
+   - A newly created `VisualizationAgent` for charts
+2. **PARALLEL EXECUTION:** Runs multiple tools concurrently when possible
+3. **DATA FLOW:** Passes outputs between tools, e.g., web data → llama3.2 → visualization
+4. **ERROR RESILIENCE:** If one tool fails (e.g., web fetch quota), adapts by using alternatives
+
+### Virtual Tool Creation On-Demand
+
+This demonstrates the system creating new tools during execution.
+
+```
+> I need to analyze 100 CSV files for anomalies. Create whatever tools you need to process them efficiently.
+```
+
+**Expected Behavior:**
+1. **CAPABILITY GAP:** Realizes no CSV processing tool exists
+2. **TOOL GENERATION:** Creates `CSVAnalyzer.md` with:
+   ```markdown
+   #### analyze_csv
+   `sh`
+   ```sh
+   #!/bin/bash
+   FILE_PATH=$(echo "$GEMINI_TOOL_ARGS" | jq -r .path)
+   # Use awk/sed for CSV processing
+   # Detect anomalies based on statistical analysis
+   ```
+   ```
+3. **BATCH PROCESSING:** Uses the new tool to process all files
+4. **OPTIMIZATION:** May create additional tools for parallel processing
+
+## Key Insights
+
+These examples illustrate the transformative power of the manifest-driven virtual tool system:
+
+1. **Immediate Extensibility**: New capabilities can be added by writing Markdown
+2. **Tool Composition**: Complex workflows emerge from simple tool combinations  
+3. **Runtime Evolution**: The system adapts its toolset during execution
+4. **Security & Transparency**: All tool logic is auditable and sandboxed
+5. **Multi-Model Orchestration**: Seamlessly integrate external AI services
+
+The manifest-driven architecture provides a flexible and powerful foundation for creating truly autonomous, adaptive, and self-improving AI systems that can leverage the best tools and models for each task.
