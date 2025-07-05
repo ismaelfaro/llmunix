@@ -121,6 +121,104 @@ Potential Bugs and Considerations:
 - **Cost optimization**: Use smaller models for routine tasks
 - **Consensus building**: Get multiple perspectives on critical decisions
 
+### Memory-Driven Learning System
+
+This example shows how agents use the multi-tier memory system during the EcoFlow Pro campaign execution.
+
+```
+> Create a comprehensive marketing campaign for "EcoFlow Pro" - a new sustainable water purification device.
+```
+
+**Actual Memory Usage from EcoFlow Pro Campaign:**
+1. **Initial Planning**: SystemAgent stores the execution plan:
+   ```
+   write_file(path="workspace/state/plan.md", content="Marketing Campaign Plan: EcoFlow Pro...")
+   ```
+
+2. **Market Research Phase**: MarketAnalystAgent uses memory tiers:
+   ```
+   # Volatile memory for temporary search results
+   memory_store(type="volatile", key="brita_competitor_data", value="Market share: 35%...")
+   
+   # Task memory for campaign-specific insights
+   memory_store(type="task", key="ecoflow_target_audience", value="Eco-conscious millennials...")
+   ```
+
+3. **Permanent Learning**: Key market insights are preserved:
+   ```
+   # Actual permanent memories created during execution:
+   memory_store(type="permanent", 
+                key="SustainableWaterMarket_Trends_2025_07_05", 
+                value="Key trends: decentralization, smart systems (AI/IoT)...")
+   
+   memory_store(type="permanent", 
+                key="SustainableWaterMarket_Competitors_2025_07_05",
+                value="Major players: Brita, LifeStraw, Soma...")
+   ```
+
+4. **Strategic Decisions**: CEO agent stores decisions for future reference:
+   ```
+   memory_store(type="permanent", 
+                key="decision_20250705_EcoFlowProStrategy",
+                value="Position as premium sustainable solution...")
+   ```
+
+5. **Future Campaigns**: Next time a water purification campaign is requested, agents can:
+   ```
+   # Search for relevant past experiences
+   memory_search(pattern="water purification market")
+   
+   # Recall specific competitor analysis
+   memory_recall(type="permanent", key="SustainableWaterMarket_Competitors_2025_07_05")
+   ```
+
+**Key Benefits Demonstrated:**
+- **Knowledge Accumulation**: Market insights persist beyond single execution
+- **Contextual Awareness**: Agents reference past analyses for better decisions
+- **Continuous Improvement**: Each campaign builds on previous learnings
+
+### Inter-Agent Collaboration via Messaging
+
+This demonstrates complex multi-agent workflows using the messaging system.
+
+```
+> Our competitor just announced a major product update. 
+> I need a rapid response strategy within 2 hours.
+```
+
+**Expected Behavior:**
+1. **Crisis Alert**: SystemAgent broadcasts urgent message:
+   ```
+   broadcast_message(
+     message="URGENT: Competitor announcement requires immediate response. All agents standby.",
+     topic="crisis_response"
+   )
+   ```
+2. **Parallel Execution**: Multiple agents work simultaneously:
+   - MarketAnalyst fetches competitor details
+   - ContentWriter drafts response options
+   - CEO reviews and decides strategy
+3. **Message Flow**:
+   ```
+   # Analyst to CEO
+   send_message(
+     to="CEOAgent",
+     message="Competitor analysis complete. They're targeting our core market with 20% lower pricing.",
+     priority="urgent"
+   )
+   
+   # CEO to Writer
+   send_message(
+     to="ContentWriterAgent", 
+     message="Draft announcement emphasizing our superior quality and support. Due in 30 mins.",
+     priority="urgent"
+   )
+   ```
+4. **Coordination**: Agents check messages frequently during crisis:
+   ```
+   check_messages(agent="ContentWriterAgent", priority="urgent")
+   ```
+
 ## 🔬 Advanced Scenarios
 
 These examples demonstrate the system's more sophisticated adaptive capabilities.
@@ -201,5 +299,88 @@ These examples illustrate the transformative power of the manifest-driven virtua
 3. **Runtime Evolution**: The system adapts its toolset during execution
 4. **Security & Transparency**: All tool logic is auditable and sandboxed
 5. **Multi-Model Orchestration**: Seamlessly integrate external AI services
+
+### 🏢 Virtual Company Demo
+
+For a comprehensive demonstration of memory and messaging in action, see the **Virtual Company Demo** at `examples/virtual_company_demo.md`. This showcase features:
+
+- **Four Specialized Agents**: CEO, Market Analyst, Content Writer, and QA Reviewer
+- **Complete Marketing Campaign**: From market research to final deliverables
+- **Memory Evolution**: Watch how agents learn and improve
+- **Message Choreography**: See real-time agent coordination
+- **Business Value**: Produces professional-quality outputs
+
+Run the demo with:
+```bash
+./llmunix-boot
+gemini
+> Create a comprehensive marketing campaign for "EcoFlow Pro" - a new sustainable water purification device.
+```
+
+## 📊 Case Study: EcoFlow Pro Campaign Analysis
+
+The EcoFlow Pro marketing campaign execution provides valuable insights into the framework's capabilities and current limitations:
+
+### Execution Flow Analysis
+
+1. **Initial Planning**: SystemAgent created a comprehensive 4-phase plan stored in `workspace/state/plan.md`
+   - Phase 1: Research & Analysis (Market Analyst, Trending Topic Extractor)
+   - Phase 2: Strategy & Positioning (Intelligence Briefing)
+   - Phase 3: Content Creation (Ad Copy Generator, Content Writer)
+   - Phase 4: Review & Finalization (QA Review, Research Report)
+
+2. **Agent Delegation Challenges**:
+   - **Tool Registration**: Each agent execution registered virtual tools, causing warnings about duplicates
+   - **Output Consistency**: Agents didn't consistently save outputs to expected file locations
+   - **SystemAgent Intervention**: Required manual intervention to correct file paths and consolidate outputs
+
+3. **Memory System Usage**:
+   - **Permanent Memory**: Market trends and competitor analysis were stored for future use
+   - **Task Memory**: Plan and intermediate results were maintained throughout execution
+   - **Volatile Memory**: Temporary data was used for processing but not preserved
+
+4. **Communication System Issues**:
+   - **Message Delivery**: The `check_messages` tool encountered errors with directory handling
+   - **Agent Coordination**: Agents attempted to communicate but messaging was unreliable
+   - **Fallback Behavior**: SystemAgent had to manually coordinate instead of relying on messages
+
+### Key Observations
+
+**Strengths Demonstrated**:
+- **Resilience**: SystemAgent successfully completed the task despite tool failures
+- **Adaptability**: When agents failed to save outputs correctly, SystemAgent intervened
+- **Quality Output**: Final deliverables were professional and comprehensive
+- **Memory Persistence**: Market insights were preserved for future campaigns
+
+**Areas for Improvement**:
+- **Tool Reliability**: Virtual tool execution needs better error handling
+- **Output Standardization**: Agents need clearer contracts for file outputs
+- **Message System**: The messaging infrastructure requires debugging
+- **Agent Autonomy**: Reduce need for SystemAgent manual interventions
+
+### Technical Insights
+
+1. **Virtual Tool Architecture**:
+   - Tools are registered dynamically from `GEMINI.md` manifest
+   - Each agent execution creates a new Gemini subprocess
+   - Tool registration happens per-subprocess, causing duplicate warnings
+
+2. **File System Challenges**:
+   - Relative vs absolute path confusion in agent implementations
+   - Inconsistent output file naming conventions
+   - Need for better workspace organization standards
+
+3. **Communication Patterns**:
+   - Agents attempted peer-to-peer communication
+   - Broadcast messages for system-wide coordination
+   - Priority-based message handling for urgent tasks
+
+### Recommendations for Future Development
+
+1. **Standardize Agent Contracts**: Define clear input/output specifications
+2. **Improve Error Handling**: Add retry logic and fallback strategies
+3. **Fix Messaging System**: Debug the `check_messages` implementation
+4. **Enhance Tool Registry**: Prevent duplicate registrations across subprocesses
+5. **Add Monitoring**: Implement execution tracing and performance metrics
 
 The manifest-driven architecture provides a flexible and powerful foundation for creating truly autonomous, adaptive, and self-improving AI systems that can leverage the best tools and models for each task.

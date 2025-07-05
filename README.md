@@ -8,8 +8,14 @@ LLMunix implements a concept called **Adaptive Behavior Management**, where the 
 
 -   **Pure Markdown Architecture**: All system components—agents and tools—are human-readable Markdown files.
 -   **Manifest-Driven**: The entire OS "firmware" and "system calls" are defined in a single `GEMINI.md` file.
--   **Adaptive State Management**: The agent modifies its own behavioral constraints in `workspace/state/constraints.md` during execution.
--   **Intelligent Memory System**: The agent learns from past executions stored in `system/memory_log.md`.
+-   **Multi-Tier Memory System**: Three memory levels for different persistence needs:
+    -   **Volatile Memory**: Temporary data for current execution
+    -   **Task Memory**: Information relevant to the current goal
+    -   **Permanent Memory**: Long-term learnings that persist across sessions
+-   **Inter-Agent Messaging**: Agents communicate through a priority-based messaging system:
+    -   **Direct Messages**: Point-to-point communication with priority levels
+    -   **Broadcasts**: System-wide announcements via bulletin boards
+    -   **Inbox Management**: Each agent has its own message queue
 -   **Dynamic Evolution**: The agent can write new Markdown component files to create new tools and agents on the fly.
 
 ---
@@ -131,6 +137,88 @@ llmunix/
     └── state/           # The agent's live memory and state.
 ```
 
+## Enhanced Architecture: Memory & Messaging
+
+### Multi-Tier Memory System
+
+LLMunix implements a sophisticated three-tier memory architecture that enables agents to learn and improve over time:
+
+```
+workspace/memory/
+├── volatile/       # Cleared each session - temporary data
+├── task/          # Persists for current goal - working context
+└── permanent/     # Located in system/memory/permanent/ - long-term learning
+```
+
+**Memory Operations:**
+- `memory_store(type, key, value)` - Store information with timestamp
+  - **volatile**: For temporary calculations, fetched data, intermediate results
+  - **task**: For context about the current goal, plans, decisions
+  - **permanent**: For learnings, patterns, and insights to retain
+- `memory_recall(type, key)` - Retrieve specific memories by key
+- `memory_search(pattern)` - Full-text search across memory tiers
+
+**Implementation Details:**
+- Each memory entry is stored as a Markdown file with timestamps
+- Volatile and task memories are stored per-session in workspace
+- Permanent memories persist in the system directory across sessions
+- The `memory_search` tool uses grep to find patterns across all tiers
+
+### Agent Communication System
+
+Agents communicate through an asynchronous message-passing system that enables complex multi-agent workflows:
+
+```
+workspace/messages/
+├── inbox/         # Per-agent message queues
+│   └── AgentName/
+│       └── msg_[timestamp]_[sender].md
+├── bulletins/     # Broadcast messages by topic
+└── read/          # Processed messages archive
+```
+
+**Messaging Tools:**
+- `send_message(to, message, priority, from)` - Direct agent-to-agent communication
+  - Priority levels: urgent > high > normal > low
+  - Messages include metadata: sender, timestamp, priority
+- `check_messages(agent, priority, mark_read)` - Check inbox with filters
+  - Can filter by priority level
+  - Option to mark messages as read
+- `broadcast_message(message, topic)` - System-wide announcements
+  - Posted to bulletin boards by topic
+  - All agents can subscribe to topics
+
+**Message Format:**
+```markdown
+---
+from: SenderAgent
+to: RecipientAgent
+timestamp: 1234567890
+time: 2025-07-05 12:34:56
+priority: normal
+---
+
+Message content here...
+```
+
+### How Memory & Messaging Work Together
+
+The EcoFlow Pro campaign execution demonstrates the synergy:
+
+1. **Memory Evolution**: Agents store market insights in permanent memory for future campaigns
+2. **Contextual Communication**: Messages reference shared memories and past analyses
+3. **Learning from Errors**: Failed tool executions are logged for improvement
+4. **Collaborative Intelligence**: Agents build on each other's work through messages
+
+### Virtual Company Demo
+
+See the power of memory and messaging in action with our Virtual Company example:
+- **CEO, Analyst, Writer, and QA agents** collaborate autonomously
+- **Market insights** are stored permanently for future reference
+- **Task coordination** happens through priority-based messaging
+- **Quality feedback** loops ensure continuous improvement
+- Located in `examples/virtual_company_demo.md`
+
 ## Technical Architecture
 
 ### Virtual Tool Execution Flow
@@ -157,6 +245,28 @@ llmunix/
 | Debugging | IDE/Debugger | Read the Markdown |
 | Sharing | Package manager | Copy the file |
 | Security | Binary analysis | Text inspection |
+
+## Real-World Applications
+
+The enhanced memory and messaging systems enable:
+
+### Business Process Automation
+- Virtual companies with specialized agent roles
+- Automated report generation with quality control
+- Market research and competitive analysis
+- Content creation pipelines
+
+### Collaborative Intelligence
+- Multiple agents working on complex problems
+- Peer review and feedback loops
+- Knowledge accumulation over time
+- Consensus building through message exchanges
+
+### Adaptive Systems
+- Learning from past executions
+- Improving performance through memory
+- Context-aware decision making
+- Self-organizing agent hierarchies
 
 ## Future Potential
 

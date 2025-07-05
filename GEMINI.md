@@ -25,6 +25,19 @@ You should not perform low-level tasks yourself. Your job is to delegate.
 5.  **ERROR HANDLING**: If a tool fails, analyze the error. If it's a transient issue (like a web fetch quota), try a different source or a different tool (like `google_search`). If a tool is fundamentally flawed, use `read_file`/`write_file` to modify and fix it.
 6.  **SYNTHESIZE & COMPLETE**: Once all steps are complete, synthesize the results into a final deliverable and report "COMPLETE".
 
+**Memory Management Strategy:**
+- **Volatile Memory**: Use `memory_store(type="volatile", key, value)` for temporary data within the current execution
+- **Task Memory**: Use `memory_store(type="task", key, value)` for information relevant to the current goal
+- **Permanent Memory**: Use `memory_store(type="permanent", key, value)` for learnings that should persist across sessions
+- **Memory Recall**: Use `memory_recall(type, key)` to retrieve specific memories
+- **Memory Search**: Use `memory_search(pattern)` to find relevant past experiences
+
+**Inter-Agent Communication:**
+- **Direct Messages**: Use `send_message(to, message, priority)` to coordinate with specific agents
+- **Check Inbox**: Use `check_messages(agent="SystemAgent")` regularly to monitor incoming messages
+- **Broadcasts**: Use `broadcast_message(message, topic)` for system-wide announcements
+- **Priority Levels**: urgent > high > normal > low - Use appropriately
+
 ---
 ### Tools
 This section defines the virtual "system calls" and the agent/tool interpreters.
@@ -253,5 +266,316 @@ gemini -p "Use the Google Search tool to find information about: $QUERY"
   "name": "google_search",
   "description": "Performs a Google search for a given query and returns a summary of the results. Use this as a fallback if web_fetch fails or to discover URLs.",
   "parameters": { "type": "object", "properties": { "query": { "type": "string" }}, "required": ["query"] }
+}
+```
+
+#### memory_store
+`sh`
+```sh
+#!/bin/bash
+# Enhanced memory storage system with three tiers: volatile, task, and permanent
+MEMORY_TYPE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .type)
+KEY=$(echo "$GEMINI_TOOL_ARGS" | jq -r .key)
+VALUE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .value)
+TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Validate memory type
+if [[ ! "$MEMORY_TYPE" =~ ^(volatile|task|permanent)$ ]]; then
+  echo "Error: Invalid memory type. Must be 'volatile', 'task', or 'permanent'." >&2
+  exit 1
+fi
+
+# Create directories if they don't exist
+mkdir -p "workspace/memory/volatile"
+mkdir -p "workspace/memory/task"
+mkdir -p "system/memory/permanent"
+
+# Store based on type with timestamp
+case $MEMORY_TYPE in
+  volatile)
+    # Volatile memory is overwritten each time
+    echo "[$TIMESTAMP] $VALUE" > "workspace/memory/volatile/${KEY}.md"
+    echo "Stored in volatile memory: $KEY"
+    ;;
+  task)
+    # Task memory persists for the current goal
+    echo "[$TIMESTAMP] $VALUE" > "workspace/memory/task/${KEY}.md"
+    echo "Stored in task memory: $KEY"
+    ;;
+  permanent)
+    # Permanent memory appends to maintain history
+    echo "[$TIMESTAMP] $VALUE" >> "system/memory/permanent/${KEY}.md"
+    echo "Appended to permanent memory: $KEY"
+    ;;
+esac
+```
+`json`
+```json
+{
+  "name": "memory_store",
+  "description": "Stores information in the multi-tier memory system. Use 'volatile' for temporary data, 'task' for current goal context, and 'permanent' for long-term learning.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "type": { "type": "string", "enum": ["volatile", "task", "permanent"], "description": "Memory tier: volatile (temporary), task (current goal), or permanent (long-term)" },
+      "key": { "type": "string", "description": "Unique identifier for this memory" },
+      "value": { "type": "string", "description": "The information to store" }
+    },
+    "required": ["type", "key", "value"]
+  }
+}
+```
+
+#### memory_recall
+`sh`
+```sh
+#!/bin/bash
+# Retrieves information from the memory system
+MEMORY_TYPE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .type)
+KEY=$(echo "$GEMINI_TOOL_ARGS" | jq -r .key)
+
+# Determine file path based on type
+case $MEMORY_TYPE in
+  volatile)
+    FILE_PATH="workspace/memory/volatile/${KEY}.md"
+    ;;
+  task)
+    FILE_PATH="workspace/memory/task/${KEY}.md"
+    ;;
+  permanent)
+    FILE_PATH="system/memory/permanent/${KEY}.md"
+    ;;
+  *)
+    echo "Error: Invalid memory type. Must be 'volatile', 'task', or 'permanent'." >&2
+    exit 1
+    ;;
+esac
+
+# Read the memory if it exists
+if [ -f "$FILE_PATH" ]; then
+  cat "$FILE_PATH"
+else
+  echo "No memory found for key: $KEY in $MEMORY_TYPE memory"
+fi
+```
+`json`
+```json
+{
+  "name": "memory_recall",
+  "description": "Retrieves stored information from the memory system.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "type": { "type": "string", "enum": ["volatile", "task", "permanent"], "description": "Memory tier to search" },
+      "key": { "type": "string", "description": "The memory key to retrieve" }
+    },
+    "required": ["type", "key"]
+  }
+}
+```
+
+#### memory_search
+`sh`
+```sh
+#!/bin/bash
+# Searches across all memory tiers for a pattern
+PATTERN=$(echo "$GEMINI_TOOL_ARGS" | jq -r .pattern)
+MEMORY_TYPE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .type // "all")
+
+search_in_dir() {
+  local dir=$1
+  local label=$2
+  if [ -d "$dir" ]; then
+    echo "=== $label Memory ==="
+    grep -r "$PATTERN" "$dir" 2>/dev/null | while read -r line; do
+      echo "$line"
+    done
+    echo ""
+  fi
+}
+
+# Search based on type
+case $MEMORY_TYPE in
+  volatile)
+    search_in_dir "workspace/memory/volatile" "Volatile"
+    ;;
+  task)
+    search_in_dir "workspace/memory/task" "Task"
+    ;;
+  permanent)
+    search_in_dir "system/memory/permanent" "Permanent"
+    ;;
+  all)
+    search_in_dir "workspace/memory/volatile" "Volatile"
+    search_in_dir "workspace/memory/task" "Task"
+    search_in_dir "system/memory/permanent" "Permanent"
+    ;;
+esac
+```
+`json`
+```json
+{
+  "name": "memory_search",
+  "description": "Searches for patterns across memory tiers.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "pattern": { "type": "string", "description": "Pattern to search for in memories" },
+      "type": { "type": "string", "enum": ["volatile", "task", "permanent", "all"], "description": "Memory tier to search (default: all)" }
+    },
+    "required": ["pattern"]
+  }
+}
+```
+
+#### send_message
+`sh`
+```sh
+#!/bin/bash
+# Sends a message to another agent's inbox
+TO_AGENT=$(echo "$GEMINI_TOOL_ARGS" | jq -r .to)
+FROM_AGENT=$(echo "$GEMINI_TOOL_ARGS" | jq -r .from // "SystemAgent")
+MESSAGE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .message)
+PRIORITY=$(echo "$GEMINI_TOOL_ARGS" | jq -r .priority // "normal")
+TIMESTAMP=$(date +%s)
+HUMAN_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Create inbox directory for recipient
+mkdir -p "workspace/messages/inbox/$TO_AGENT"
+
+# Create message file with metadata
+MSG_FILE="workspace/messages/inbox/$TO_AGENT/msg_${TIMESTAMP}_${FROM_AGENT}.md"
+cat > "$MSG_FILE" << EOF
+---
+from: $FROM_AGENT
+to: $TO_AGENT
+timestamp: $TIMESTAMP
+time: $HUMAN_TIME
+priority: $PRIORITY
+---
+
+$MESSAGE
+EOF
+
+echo "Message sent to $TO_AGENT (Priority: $PRIORITY)"
+```
+`json`
+```json
+{
+  "name": "send_message",
+  "description": "Sends a message to another agent. Messages are queued in the recipient's inbox.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "to": { "type": "string", "description": "Name of the recipient agent" },
+      "from": { "type": "string", "description": "Name of the sender agent (default: SystemAgent)" },
+      "message": { "type": "string", "description": "The message content" },
+      "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low"], "description": "Message priority (default: normal)" }
+    },
+    "required": ["to", "message"]
+  }
+}
+```
+
+#### check_messages
+`sh`
+```sh
+#!/bin/bash
+# Checks an agent's inbox for new messages
+AGENT_NAME=$(echo "$GEMINI_TOOL_ARGS" | jq -r .agent // "SystemAgent")
+FILTER_PRIORITY=$(echo "$GEMINI_TOOL_ARGS" | jq -r .priority // "all")
+MARK_READ=$(echo "$GEMINI_TOOL_ARGS" | jq -r .mark_read // "false")
+
+INBOX_DIR="workspace/messages/inbox/$AGENT_NAME"
+
+if [ ! -d "$INBOX_DIR" ]; then
+  echo "No messages found for $AGENT_NAME"
+  exit 0
+fi
+
+# List messages sorted by timestamp
+echo "=== Inbox for $AGENT_NAME ==="
+for msg_file in $(ls -t "$INBOX_DIR"/*.md 2>/dev/null); do
+  if [ -f "$msg_file" ]; then
+    # Extract metadata
+    PRIORITY=$(grep "^priority:" "$msg_file" | cut -d' ' -f2)
+    
+    # Apply priority filter if specified
+    if [ "$FILTER_PRIORITY" != "all" ] && [ "$PRIORITY" != "$FILTER_PRIORITY" ]; then
+      continue
+    fi
+    
+    echo ""
+    echo "--- Message ---"
+    cat "$msg_file"
+    
+    # Move to read folder if requested
+    if [ "$MARK_READ" = "true" ]; then
+      mkdir -p "workspace/messages/read/$AGENT_NAME"
+      mv "$msg_file" "workspace/messages/read/$AGENT_NAME/"
+    fi
+  fi
+done
+```
+`json`
+```json
+{
+  "name": "check_messages",
+  "description": "Checks an agent's inbox for messages.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "agent": { "type": "string", "description": "Agent name to check messages for (default: SystemAgent)" },
+      "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low", "all"], "description": "Filter by priority (default: all)" },
+      "mark_read": { "type": "boolean", "description": "Move messages to read folder after viewing (default: false)" }
+    }
+  }
+}
+```
+
+#### broadcast_message
+`sh`
+```sh
+#!/bin/bash
+# Broadcasts a message to all agents via a shared bulletin board
+FROM_AGENT=$(echo "$GEMINI_TOOL_ARGS" | jq -r .from // "SystemAgent")
+MESSAGE=$(echo "$GEMINI_TOOL_ARGS" | jq -r .message)
+TOPIC=$(echo "$GEMINI_TOOL_ARGS" | jq -r .topic // "general")
+TIMESTAMP=$(date +%s)
+HUMAN_TIME=$(date +"%Y-%m-%d %H:%M:%S")
+
+# Create bulletin directory
+mkdir -p "workspace/messages/bulletins/$TOPIC"
+
+# Create bulletin file
+BULLETIN_FILE="workspace/messages/bulletins/$TOPIC/bulletin_${TIMESTAMP}_${FROM_AGENT}.md"
+cat > "$BULLETIN_FILE" << EOF
+---
+from: $FROM_AGENT
+topic: $TOPIC
+timestamp: $TIMESTAMP
+time: $HUMAN_TIME
+type: broadcast
+---
+
+$MESSAGE
+EOF
+
+echo "Broadcast posted to topic: $TOPIC"
+```
+`json`
+```json
+{
+  "name": "broadcast_message",
+  "description": "Posts a message to a shared bulletin board that all agents can read.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "message": { "type": "string", "description": "The broadcast message" },
+      "topic": { "type": "string", "description": "Topic category for the broadcast (default: general)" },
+      "from": { "type": "string", "description": "Name of the broadcasting agent (default: SystemAgent)" }
+    },
+    "required": ["message"]
+  }
 }
 ```
