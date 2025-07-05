@@ -3,10 +3,18 @@
 # This script initializes the workspace for an agentic run.
 
 echo "🚀 Booting LLMunix..."
-# Clean and create the state directory
+# Clean and create the workspace directory structure
 rm -rf workspace
 mkdir -p workspace/state
-echo "✅ Cleared and created workspace/state/"
+mkdir -p workspace/memory/volatile
+mkdir -p workspace/memory/task
+mkdir -p workspace/messages/inbox/SystemAgent
+mkdir -p workspace/messages/read
+mkdir -p workspace/messages/bulletins/general
+mkdir -p workspace/outputs
+# Ensure permanent memory directory exists (not cleared on boot)
+mkdir -p system/memory/permanent
+echo "✅ Cleared and created workspace directories"
 
 # Initialize all necessary state files with default content.
 echo "# Execution Plan
@@ -18,4 +26,5 @@ echo "## LLMunix History" > workspace/state/history.md
 echo "{}" > workspace/state/variables.json
 
 echo "✅ LLMunix has booted successfully. Workspace is ready."
-echo "➡️ Next step: Run 'gemini' and provide your high-level goal."
+echo "➡️ Next step: Run 'gemini -s false' (or 'gemini --no-sandbox') and provide your high-level goal."
+echo "⚠️  Note: Sandbox mode is disabled to allow file writes to ./workspace"
