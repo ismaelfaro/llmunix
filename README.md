@@ -1,5 +1,7 @@
 # LLMunix 🦄
 
+> ⚠️ **IMPORTANT**: LLMunix requires the "virtual tools" feature from [Gemini CLI Issue #1806](https://github.com/google-gemini/gemini-cli/issues/1806). This feature is currently in PR. To use LLMunix, you must compile the `issue-1806` branch from the fork at https://github.com/EvolvingAgentsLabs/gemini-cli
+
 > 🌐 **Part of [Evolving Agents Labs](https://evolvingagentslabs.github.io)** | 🔬 [View All Experiments](https://evolvingagentslabs.github.io#experiments) | 📖 [Project Details](https://evolvingagentslabs.github.io/experiments/llmunix.html)
 
 A Pure Markdown Operating System where an AI agent acts as the kernel. It's designed to be run by a manifest-aware, tool-calling runtime like an enhanced **[Gemini CLI](https://github.com/google-gemini/gemini-cli)**.
