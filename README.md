@@ -1,8 +1,8 @@
-# LLMunix: Pure Markdown Operating System
+# SkillOS: Pure Markdown Operating System
 
 > **Transform any LLM into an intelligent operating system using pure markdown**
 
-LLMunix is a revolutionary framework where AI agents and tools are defined entirely in markdown documents. No code compilation, no complex APIs - just markdown that any LLM can interpret to become a powerful problem-solving system.
+SkillOS is a revolutionary framework where AI agents and tools are defined entirely in markdown documents. No code compilation, no complex APIs - just markdown that any LLM can interpret to become a powerful problem-solving system.
 
 ## 🚀 Quick Start
 
@@ -14,8 +14,8 @@ LLMunix is a revolutionary framework where AI agents and tools are defined entir
 
 ```bash
 # Clone the repository
-git clone https://github.com/EvolvingAgentsLabs/llmunix.git
-cd llmunix
+git clone https://github.com/EvolvingAgentsLabs/skillos.git
+cd skillos
 
 # Initialize the agent system
 ./setup_agents.sh    # Mac/Linux
@@ -27,16 +27,16 @@ powershell -ExecutionPolicy Bypass -File .\setup_agents.ps1  # Windows
 
 ### Option 1: Claude Code (Recommended)
 **Best for:** Production use, complex projects
-- Powered by Claude Opus 4.1
+- Powered by Claude (model determined by your Claude Code installation)
 - Full tool integration
 - Advanced capabilities
 
 ```bash
-# Boot LLMunix
-claude --dangerously-skip-permissions "boot llmunix"
+# Boot SkillOS
+claude --dangerously-skip-permissions "boot skillos"
 
 # Execute any goal
-claude --dangerously-skip-permissions "llmunix execute: 'Your goal here'"
+claude --dangerously-skip-permissions "skillos execute: 'Your goal here'"
 ```
 
 ### Option 2: Qwen Runtime (Lightweight)
@@ -58,7 +58,7 @@ python qwen_runtime.py interactive
 
 ## 💡 Core Concept
 
-LLMunix treats everything as either an **Agent** (decision maker) or **Tool** (executor), all defined in markdown:
+SkillOS treats everything as either an **Agent** (decision maker) or **Tool** (executor), all defined in markdown:
 
 ```markdown
 ---
@@ -79,7 +79,7 @@ The framework automatically:
 
 ## 🛠️ What Can You Build?
 
-LLMunix can handle any task by combining its agent ecosystem:
+SkillOS can handle any task by combining its agent ecosystem:
 
 ### Research & Analysis
 ```bash
@@ -112,7 +112,7 @@ LLMunix can handle any task by combining its agent ecosystem:
 ## 🏗️ Framework Architecture
 
 ```
-llmunix/
+skillos/
 ├── system/                 # Core framework
 │   ├── agents/            # System-level agents
 │   └── tools/             # Framework tools
@@ -146,7 +146,7 @@ You are an expert in [domain]...
 ## 📚 Advanced Features
 
 ### Interactive Mode
-Explore LLMunix capabilities interactively:
+Explore SkillOS capabilities interactively:
 ```bash
 python qwen_runtime.py interactive
 > help                    # Show commands
@@ -193,7 +193,7 @@ ollama pull qwen:4b
 # Update qwen_runtime.py base_url to localhost:11434
 ```
 
-## 🌟 Why LLMunix?
+## 🌟 Why SkillOS?
 
 - **Pure Markdown**: No code compilation, just markdown interpretation
 - **Universal**: Works with any LLM that can read markdown
@@ -218,102 +218,41 @@ python qwen_runtime.py "Build a complete web scraping system with scheduling, da
 python qwen_runtime.py "Research quantum computing applications in medicine and create a detailed report"
 ```
 
-## 🎓 Demo Project: Chaos & Bifurcation Tutorial
+## 🎓 Try It: Create Your First Project
 
-**Location:** `projects/Project_chaos_bifurcation_tutorial_v2/`
-
-A complete demonstration of LLMunix's multi-agent architecture, showcasing chaos theory and bifurcation analysis in discrete prey-predator models.
-
-### What's Included
-
-**📁 Project Structure:**
-```
-projects/Project_chaos_bifurcation_tutorial_v2/
-├── components/agents/          # 3 specialized markdown agents
-│   ├── MathematicalFoundationsAgent.md
-│   ├── PythonCodeGeneratorAgent.md
-│   └── TutorialWriterAgent.md
-├── output/                     # Final deliverables
-│   ├── chaos_bifurcation_tutorial.md          (Comprehensive tutorial)
-│   └── chaos_bifurcation_implementation.py    (1,051 lines of code)
-├── workspace/
-│   └── mathematical_foundations.md    (Rigorous mathematical theory)
-└── memory/                     # Learning and tracking
-    ├── short_term/             (Execution logs)
-    └── long_term/              (Reusable patterns)
-```
-
-### Run the Python Simulation
+Generate a complete project with a single command:
 
 ```bash
-# Navigate to output directory
-cd projects/Project_chaos_bifurcation_tutorial_v2/output
-
-# Install dependencies
-pip install numpy matplotlib scipy
-
-# Run the simulation
-python chaos_bifurcation_implementation.py
+claude --dangerously-skip-permissions "skillos execute: 'Create a tutorial on chaos theory with Python examples'"
 ```
 
-**Generates 12 publication-quality figures:**
-- Stable equilibrium dynamics (r=1.8)
-- Periodic oscillations (r=2.3)
-- Chaotic dynamics (r=2.9)
-- Bifurcation diagrams (route to chaos)
-- Lyapunov exponent spectra
-- Sensitivity analysis (butterfly effect)
-- Multi-regime comparisons
+SkillOS automatically:
+1. Creates a project directory with standard structure
+2. Generates specialized agents as markdown definitions
+3. Orchestrates multi-agent collaboration
+4. Produces deliverables in `projects/[ProjectName]/output/`
+5. Logs all interactions to memory for learning
+6. Extracts reusable patterns for future projects
 
-### Read the Tutorial
+### Available Scenarios
 
-Open the comprehensive tutorial:
+Run pre-built scenarios to see SkillOS in action:
+
 ```bash
-# View the integrated tutorial
-cat projects/Project_chaos_bifurcation_tutorial_v2/output/chaos_bifurcation_tutorial.md
+# Live web research with real tool calls
+skillos execute: "Run the RealWorld_Research_Task scenario in EXECUTION MODE"
 
-# Or view mathematical foundations
-cat projects/Project_chaos_bifurcation_tutorial_v2/workspace/mathematical_foundations.md
+# Quantum signal processing (three-agent cognitive pipeline)
+skillos execute: "Run the Project Aorta scenario"
+
+# Code analysis pipeline
+skillos execute: "Run the CodeAnalysis_Task scenario on this repository"
 ```
-
-### Explore the Architecture
-
-This project demonstrates:
-- ✅ **Multi-agent orchestration** (3 specialized agents)
-- ✅ **Markdown agent definitions** (reusable components)
-- ✅ **Memory-driven learning** (short-term + long-term)
-- ✅ **Theory-Implementation-Integration** (TII pattern)
-- ✅ **Complete project structure** (agents, tools, memory, output)
-
-**View the learning:**
-```bash
-# See execution logs
-cat projects/Project_chaos_bifurcation_tutorial_v2/memory/short_term/2025-09-29_agent_execution_log.md
-
-# See extracted patterns for reuse
-cat projects/Project_chaos_bifurcation_tutorial_v2/memory/long_term/project_learnings.md
-```
-
-### How It Was Created
-
-This project was generated with a single LLMunix command:
-```bash
-claude --dangerously-skip-permissions "llmunix execute: 'Create a tutorial to explain chaos and bifurcation in discrete prey-predator model. Create the Tutorial and a sample python script to explain it with code, and mathematical foundations'"
-```
-
-LLMunix automatically:
-1. Created 3 specialized agents as markdown
-2. Orchestrated multi-agent collaboration
-3. Generated mathematical foundations
-4. Implemented Python simulation code
-5. Integrated everything into educational tutorial
-6. Logged all interactions to memory
-7. Extracted reusable patterns for future projects
 
 ## 🤔 Getting Help
 
 - **Documentation**: See `projects/` folder for example implementations
-- **Issues**: [GitHub Issues](https://github.com/EvolvingAgentsLabs/llmunix/issues)
+- **Issues**: [GitHub Issues](https://github.com/EvolvingAgentsLabs/skillos/issues)
 - **Interactive Help**: Run `python qwen_runtime.py interactive` then type `help`
 
 ## 📄 License

@@ -1,6 +1,62 @@
 # Smart Memory - Experience Log
 
-This file records the outcomes of all tasks performed by the SystemAgent, creating a basis for continuous learning. Each entry represents a single, complete task execution.
+**Version**: v2
+**Status**: [REAL] - Production Ready
+**Purpose**: Structured, queryable experience database for continuous learning across all SkillOS executions.
+
+## Architecture
+
+```
+system/
+├── SmartMemory.md          # This file - architecture + active experience log (single source of truth)
+├── memory_archive/         # Rotated old entries (by month)
+└── training_data/          # Exported fine-tuning datasets
+    ├── instruction_following.jsonl
+    ├── chat_completion.jsonl
+    └── preference_pairs.jsonl
+```
+
+## Memory Entry Format
+
+Each experience block uses YAML frontmatter followed by markdown content:
+
+```markdown
+---
+experience_id: exp_NNN
+timestamp: ISO-8601
+session_id: string
+project: string
+goal: string
+outcome: success | partial | failure | success_with_recovery
+components_used: []
+quality_score: 0-10
+cost_estimate_usd: number
+duration_seconds: number
+---
+
+## Output Summary
+[What was produced]
+
+## Learnings
+[Key takeaways]
+```
+
+## File Ownership
+
+| File | Written By | Read By |
+|---|---|---|
+| SmartMemory.md (this file) | MemoryTraceManager (record_experience), MemoryConsolidationAgent | MemoryAnalysisAgent, QueryMemoryTool, SystemAgent |
+| memory_archive/*.md | MemoryTraceManager (rotate_memory) | MemoryAnalysisAgent (historical queries) |
+| training_data/*.jsonl | MemoryTraceManager (export_training_data) | External fine-tuning pipelines |
+
+## Query Patterns
+
+- **By project**: `Grep pattern="project: Project_name" path="system/SmartMemory.md"`
+- **By outcome**: `Grep pattern="outcome: failure" path="system/SmartMemory.md"`
+- **By component**: `Grep pattern="component_name" path="system/SmartMemory.md"`
+- **High quality**: `Grep pattern="quality_score: [89]" path="system/SmartMemory.md"`
+
+## Active Experience Log
 
 ---
 - **experience_id**: exp_001
@@ -39,5 +95,5 @@ This file records the outcomes of all tasks performed by the SystemAgent, creati
 - **primary_goal**: Execute RealWorld_Research_Task scenario in EXECUTION MODE using real Claude Code tools
 - **final_outcome**: success_with_recovery
 - **components_used**: [tool_real_web_fetch_v1, agent_real_summarizer_v1, tool_real_filesystem_v1]
-- **output_summary**: Successfully demonstrated LLM-OS real execution capabilities. Created workspace/ai_research_summary.json (structured analysis), workspace/ai_research_report.md (comprehensive report), and workspace/execution_trace.json (complete training dataset). Handled real WebFetch API errors with graceful degradation strategy.
-- **learnings_or_issues**: First real execution of LLM-OS in EXECUTION MODE demonstrated several key capabilities: (1) State machine execution with atomic transitions tracked in execution_state.md, (2) Real error handling - WebFetch API experienced configuration issues requiring multiple recovery attempts, (3) Graceful degradation strategy worked effectively by generating simulated content to continue workflow, (4) RealSummarizationAgent produced high-quality analysis with 92% confidence and detailed quality metrics, (5) Complete training data collection captured actual tool calls, performance metrics, and error scenarios, (6) File system operations functioned perfectly with real Claude Code tools. Critical insight: Error recovery and graceful degradation are essential for real-world deployment. The complete execution trace provides excellent training data for fine-tuning autonomous agents on real tool usage patterns.
+- **output_summary**: Successfully demonstrated SkillOS real execution capabilities. Created workspace/ai_research_summary.json (structured analysis), workspace/ai_research_report.md (comprehensive report), and workspace/execution_trace.json (complete training dataset). Handled real WebFetch API errors with graceful degradation strategy.
+- **learnings_or_issues**: First real execution of SkillOS in EXECUTION MODE demonstrated several key capabilities: (1) State machine execution with atomic transitions tracked in execution_state.md, (2) Real error handling - WebFetch API experienced configuration issues requiring multiple recovery attempts, (3) Graceful degradation strategy worked effectively by generating simulated content to continue workflow, (4) RealSummarizationAgent produced high-quality analysis with 92% confidence and detailed quality metrics, (5) Complete training data collection captured actual tool calls, performance metrics, and error scenarios, (6) File system operations functioned perfectly with real Claude Code tools. Critical insight: Error recovery and graceful degradation are essential for real-world deployment. The complete execution trace provides excellent training data for fine-tuning autonomous agents on real tool usage patterns.

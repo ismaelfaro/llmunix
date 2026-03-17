@@ -1,3 +1,14 @@
+---
+name: project-aorta-scenario
+description: Three-agent cognitive pipeline for quantum homomorphic signal processing of arterial pressure waves
+version: v1
+delegation_pattern: sequential_pipeline
+agents_required:
+  - visionary-agent (created dynamically)
+  - mathematician-agent (created dynamically)
+  - quantum-engineer-agent (created dynamically)
+---
+
 # Project Aorta: Quantum Homomorphic Signal Processing Scenario
 
 ## Scenario Overview
@@ -30,23 +41,23 @@ Recreate a biomedical engineering project that originally aimed to navigate arte
 
 ```markdown
 1. **Initialize Project Context**
-   - Create workspace/project_aorta/ directory
+   - Create projects/Project_aorta/ directory structure
    - Set up state tracking for three-stage pipeline
 
 2. **Stage 1: Visionary Analysis**
    - Invoke visionary-agent with project concept
    - Generate comprehensive project description
-   - Save to workspace/project_aorta/project_vision.md
+   - Save to projects/Project_aorta/output/project_vision.md
 
 3. **Stage 2: Mathematical Formalization**
    - Invoke mathematician-agent with project vision
    - Develop formal mathematical framework
-   - Save to workspace/project_aorta/mathematical_framework.md
+   - Save to projects/Project_aorta/output/mathematical_framework.md
 
 4. **Stage 3: Quantum Implementation**
    - Invoke quantum-engineer-agent with mathematical framework
    - Generate complete Qiskit implementation
-   - Save to workspace/project_aorta/quantum_aorta_implementation.py
+   - Save to projects/Project_aorta/output/quantum_aorta_implementation.py
 
 5. **Validation and Execution**
    - Execute the generated quantum code
@@ -279,7 +290,7 @@ This technical foundation ensures the three-agent pipeline produces a scientific
 
 Execute this scenario with:
 ```bash
-llmunix execute: "Run the Project Aorta scenario to demonstrate quantum homomorphic signal processing using the three-agent cognitive pipeline"
+skillos execute: "Run the Project Aorta scenario to demonstrate quantum homomorphic signal processing using the three-agent cognitive pipeline"
 ```
 
 This will automatically orchestrate the visionary-agent → mathematician-agent → quantum-engineer-agent pipeline and produce the complete quantum implementation.

@@ -1,21 +1,28 @@
 # Environment files
 .env
-.claude                 # Claude settings
+.claude/settings.local.json
+.claude/history/
+.claude/todos/
+.qwen/
 
-# Python cache
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+venv/
+.venv/
+env/
 
-# Workspace artifacts
+# Workspace artifacts (runtime state, gitignored by design)
 workspace/
+projects/*/workspace/
 
 # OS files
-**/.DS_Store            # macOS Finder (all levels)
-Thumbs.db               # Windows Explorer
+**/.DS_Store
+Thumbs.db
 
-# Editor / IDE files
+# Editor / IDE
 *.swp
 *.swo
 *~
@@ -25,7 +32,12 @@ Thumbs.db               # Windows Explorer
 # Logs
 *.log
 
+# SkillOS package cache
+.skillos-cache/
+
 # Temporary files
 *.tmp
 *.temp
-.claude/settings.local.json
+
+# Node (for skill packages with JS templates)
+node_modules/

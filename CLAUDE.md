@@ -1,10 +1,10 @@
-# LLMunix: Pure Markdown Operating System Framework
+# SkillOS: Pure Markdown Operating System Framework
 
-This is LLMunix, a Pure Markdown Operating System where everything is either an agent or tool defined in markdown documents. Claude Code serves as the runtime engine interpreting these markdown specifications.
+This is SkillOS, a Pure Markdown Operating System where everything is either an agent or tool defined in markdown documents. Claude Code serves as the runtime engine interpreting these markdown specifications.
 
 ## Framework Philosophy: Pure Markdown
 
-**CRITICAL: LLMunix is a PURE MARKDOWN framework. Everything is either an agent or tool defined in markdown documents.**
+**CRITICAL: SkillOS is a PURE MARKDOWN framework. Everything is either an agent or tool defined in markdown documents.**
 
 ### Core Principles:
 - **Markdown-Driven Execution**: LLM interpreter reads and sends full markdown specifications to LLM for interpretation and execution
@@ -25,7 +25,7 @@ The OS "boots" when Claude reads the markdown system files and begins interpreti
 
 ## Agent Architecture Flexibility
 
-**IMPORTANT: LLMunix supports any agent architecture pattern.**
+**IMPORTANT: SkillOS supports any agent architecture pattern.**
 
 ### Supported Configurations:
 
@@ -44,11 +44,11 @@ The OS "boots" when Claude reads the markdown system files and begins interpreti
 
 Each project in the `projects/` directory can define its own optimal agent configuration based on its specific requirements.
 
-## How to Boot LLMunix
+## How to Boot SkillOS
 
 ### Boot Process
 
-LLMunix requires a one-time initialization before use. **Before running any commands**, ensure you've run the appropriate initialization script for your platform:
+SkillOS requires a one-time initialization before use. **Before running any commands**, ensure you've run the appropriate initialization script for your platform:
 
 - **Windows users**: Run `setup_agents.ps1` script
 - **Unix/Linux/Mac users**: Run `setup_agents.sh` script
@@ -61,18 +61,18 @@ This initialization prepares the environment by:
 Once initialized, you can use the boot command:
 
 ```
-boot llmunix
+boot skillos
 ```
 
-This command activates the LLMunix kernel by having Claude read and interpret the markdown system files as a functional operating system.
+This command activates the SkillOS kernel by having Claude read and interpret the markdown system files as a functional operating system.
 
 ### CRITICAL EXECUTION RULES
 
-**⚠️ IMPORTANT: All LLMunix executions MUST follow this workflow:**
+**⚠️ IMPORTANT: All SkillOS executions MUST follow this workflow:**
 
-1. **Boot LLMunix ONLY when:**
+1. **Boot SkillOS ONLY when:**
    - First command in a conversation session
-   - User explicitly requests reboot with `boot llmunix` command
+   - User explicitly requests reboot with `boot skillos` command
    - System needs to reload configuration
 
 2. **ALWAYS identify or create the project structure** in `projects/[ProjectName]/`
@@ -81,7 +81,7 @@ This command activates the LLMunix kernel by having Claude read and interpret th
 **Boot Behavior:**
 - Boot displays welcome message and initializes system state
 - Boot persists throughout the conversation session
-- Subsequent `llmunix execute:` commands do NOT trigger boot
+- Subsequent `skillos execute:` commands do NOT trigger boot
 - Only boot again if user explicitly requests it
 
 **Project Structure Requirements:**
@@ -102,7 +102,7 @@ projects/[ProjectName]/
 **Execution Pattern:**
 
 **First execution in session:**
-1. User issues: `llmunix execute: "goal"`
+1. User issues: `skillos execute: "goal"`
 2. Claude performs:
    - Display boot welcome message (ONE TIME ONLY)
    - Identify project name from goal context
@@ -115,7 +115,7 @@ projects/[ProjectName]/
    - Execute the goal
 
 **Subsequent executions in same session:**
-1. User issues: `llmunix execute: "another goal"`
+1. User issues: `skillos execute: "another goal"`
 2. Claude performs:
    - NO boot message (system already booted)
    - Identify project name from goal context
@@ -128,7 +128,7 @@ projects/[ProjectName]/
 
 ### Agent and Tool Creation Rules
 
-**CRITICAL: LLMunix is markdown-driven. All agents and tools MUST be markdown specifications.**
+**CRITICAL: SkillOS is markdown-driven. All agents and tools MUST be markdown specifications.**
 
 **When to create project-specific agents:**
 1. Goal requires specialized domain knowledge (e.g., chaos theory, quantum computing)
@@ -271,15 +271,15 @@ Execution time: 45s
 - ✅ Modular, composable solutions
 
 ### Boot Welcome Message
-When LLMunix boots, display ASCII art welcome and example commands in this format:
+When SkillOS boots, display ASCII art welcome and example commands in this format:
 
 ```
-██╗     ██╗     ███╗   ███╗██╗   ██╗███╗   ██╗██╗██╗  ██╗
-██║     ██║     ████╗ ████║██║   ██║████╗  ██║██║╚██╗██╔╝
-██║     ██║     ██╔████╔██║██║   ██║██╔██╗ ██║██║ ╚███╔╝
-██║     ██║     ██║╚██╔╝██║██║   ██║██║╚██╗██║██║ ██╔██╗
-███████╗███████╗██║ ╗═╝ ██║╚██████╔╝██║ ╚████║██║██╔╝ ██╗
-╚══════╝╚══════╝╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
+███████╗██╗  ██╗██╗██╗     ██╗      ██████╗ ███████╗
+██╔════╝██║ ██╔╝██║██║     ██║     ██╔═══██╗██╔════╝
+███████╗█████╔╝ ██║██║     ██║     ██║   ██║███████╗
+╚════██║██╔═██╗ ██║██║     ██║     ██║   ██║╚════██║
+███████║██║  ██╗██║███████╗███████╗╚██████╔╝███████║
+╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝
                 Pure Markdown Operating System v1.0
 
 🔧 System Status: READY
@@ -289,15 +289,15 @@ When LLMunix boots, display ASCII art welcome and example commands in this forma
 
 **Example Commands:**
 ```bash
-llmunix execute: "Monitor 5 tech news sources (TechCrunch, Ars Technica, Hacker News, MIT Tech Review, Wired), extract trending topics, identify patterns, and generate a weekly intelligence briefing"
+skillos execute: "Monitor 5 tech news sources (TechCrunch, Ars Technica, Hacker News, MIT Tech Review, Wired), extract trending topics, identify patterns, and generate a weekly intelligence briefing"
 
-llmunix execute: "Get live content from https://huggingface.co/blog and create a research summary"
+skillos execute: "Get live content from https://huggingface.co/blog and create a research summary"
 
-llmunix execute: "Run the Project Aorta scenario from projects/Project_aorta/"
+skillos execute: "Run the Project Aorta scenario from projects/Project_aorta/"
 
-llmunix execute: "Create a tutorial on chaos theory with Python examples"
+skillos execute: "Create a tutorial on chaos theory with Python examples"
 
-llmunix simulate: "Research task workflow for fine-tuning dataset"
+skillos simulate: "Research task workflow for fine-tuning dataset"
 ```
 
 **Project Naming Rules:**
@@ -356,38 +356,55 @@ llmunix simulate: "Research task workflow for fine-tuning dataset"
 ### File Structure
 
 ```
-llmunix/
-├── system/                                # Core LLMunix framework components
+skillos/
+├── system/                                # Core SkillOS framework components
 │   ├── agents/                        # System-wide orchestration agents
 │   │   ├── SystemAgent.md            # Core orchestration and workflow management
-│   │   └── MemoryAnalysisAgent.md     # Cross-project learning and pattern recognition
+│   │   ├── MemoryAnalysisAgent.md     # Cross-project learning and pattern recognition
+│   │   ├── MemoryConsolidationAgent.md # Memory log maintenance and consolidation
+│   │   ├── ErrorRecoveryAgent.md      # Fault tolerance and error recovery
+│   │   └── ValidationAgent.md         # System health checks and validation
 │   ├── tools/                         # Framework-level tools
 │   │   ├── ClaudeCodeToolMap.md      # Integration with Claude Code's native tools
-│   │   └── QueryMemoryTool.md        # Framework-level memory consultation
-│   ├── SmartLibrary.md               # Component registry with real tools and memory components
-│   ├── memory_log.md                 # Structured, queryable experience database
-│   └── components/                   # Core framework components
+│   │   ├── QueryMemoryTool.md        # Framework-level memory consultation
+│   │   ├── MemoryTraceManager.md     # Execution trace capture and logging
+│   │   ├── ProjectScaffoldTool.md    # Project directory bootstrapping
+│   │   └── SkillPackageManagerTool.md # apt-like skill package management
+│   ├── SmartLibrary.md               # Component registry with metadata and capabilities
+│   ├── SmartMemory.md                # Structured, queryable experience database (single source of truth)
+│   ├── memory_log.md                 # Redirect to SmartMemory.md (deprecated)
+│   ├── sources.list                  # Package sources for skill installation
+│   └── packages.lock                 # Installed skill tracking
+├── components/                            # Shared components across projects
+│   └── skills/                        # Installed skill packages
 ├── projects/                             # Individual projects with specialized components
-│   ├── Project_aorta/                # Biomedical quantum computing project
-│   │   ├── components/               # Project-specific components
-│   │   │   ├── agents/              # Project agents (VisionaryAgent, MathematicianAgent, etc.)
-│   │   │   └── tools/               # Project tools (QuantumComputingTool, WebFetcherTool, etc.)
-│   │   ├── input/                   # Project input docs and instructions
-│   │   ├── output/                  # Generated outputs and results
-│   │   └── workspace/               # Project workspace during execution
-│   └── [Other projects]/            # Additional projects with their own components
-├── scenarios/                             # Generic task scenarios
+│   └── [ProjectName]/                # Each project follows this structure:
+│       ├── components/               # Project-specific components
+│       │   ├── agents/              # Project agents (created dynamically)
+│       │   └── tools/               # Project tools
+│       ├── input/                   # Project input docs and instructions
+│       ├── output/                  # Generated outputs and results
+│       ├── memory/                  # Project memory for learning
+│       │   ├── short_term/          # Agent interactions and session logs
+│       │   └── long_term/           # Consolidated insights and learnings
+│       └── workspace/               # Project workspace during execution
+│           └── state/               # Execution state files
+├── scenarios/                             # Reusable task scenario definitions
 │   ├── RealWorld_Research_Task.md     # Live web research demo
-│   └── [Other scenarios]
-├── workspace/                            # Global execution environment
-│   ├── state/                        # Modular execution state
-│   │   ├── plan.md                  # Execution steps and metadata
-│   │   ├── context.md               # Knowledge accumulation
-│   │   ├── variables.json           # Structured data passing
-│   │   ├── history.md               # Execution log
-│   │   └── constraints.md           # Behavioral modifiers (sentient state)
-│   └── [Output files from tasks]
+│   ├── CodeAnalysis_Task.md           # Code analysis pipeline
+│   └── ProjectAortaScenario.md        # Quantum signal processing demo
+├── workspace/                            # Global execution environment (gitignored)
+│   └── state/                        # Modular execution state
+│       ├── plan.md                  # Execution steps and metadata
+│       ├── context.md               # Knowledge accumulation
+│       ├── variables.json           # Structured data passing
+│       ├── history.md               # Execution log
+│       ├── constraints.md           # Behavioral modifiers (sentient state)
+│       └── boot_report.md           # Boot status report
 ├── .claude/agents/                       # Auto-populated agent definitions for Claude Code discovery
+├── setup_agents.sh                       # Unix/Mac agent setup script
+├── setup_agents.ps1                      # Windows agent setup script
+├── qwen_runtime.py                       # Qwen LLM runtime engine
 └── CLAUDE.md                            # This configuration file
 ```
 
@@ -412,16 +429,6 @@ llmunix/
 - **Auto-Discovery**: Claude Code automatically discovers agents in `.claude/agents/`
 
 ### Execution Commands
-
-**Interactive Session (Claude Code style):**
-```
-./llmunix-llm interactive
-```
-
-**Execute with Interactive Mode:**
-```
-./llmunix-llm execute: "Create a Python calculator" -i
-```
 
 **Real Task Execution:**
 ```
@@ -453,25 +460,24 @@ The interactive session provides a Claude Code-like experience:
 **Goal Execution:**
 Simply type any goal to execute it:
 ```
-🎯 llmunix> Create a web scraper for news articles
-🎯 llmunix> Build a REST API with FastAPI
-🎯 llmunix> Analyze the data in my workspace
+🎯 skillos> Create a web scraper for news articles
+🎯 skillos> Build a REST API with FastAPI
+🎯 skillos> Analyze the data in my workspace
 ```
 
 **Goal Refinement:**
 After executing a goal, use `refine` to improve it:
 ```
-🎯 llmunix> refine
+🎯 skillos> refine
 Previous goal: Create a web scraper for news articles
 How would you like to refine this goal?
 🔄 refinement> Add error handling and save to JSON format
 ```
 
 **Session Management:**
-- Docker containers persist across multiple executions within a session
-- Workspace state is maintained between commands
+- Workspace state is maintained between commands within a conversation session
 - Full execution history and context available throughout session
-- Clean exit with proper resource cleanup
+- Boot persists throughout the conversation — no need to re-boot
 
 ## Development
 
@@ -514,11 +520,75 @@ How would you like to refine this goal?
 - Structured datasets for fine-tuning autonomous agents
 - Quality metrics and performance benchmarking
 
+## Skill Package Management
+
+SkillOS includes an apt-like package management system for installing Skills (agents and tools) from external repositories.
+
+### sources.list
+
+The file `system/sources.list` defines where to find installable Skills:
+
+```
+# Format: <type>  <uri>  <branch/tag>  [component-path]
+github  anthropics/skills       main  skills/
+github  huggingface/skills      main  skills/
+github  openai/skills           main  skills/
+```
+
+**Source Types**:
+- **github**: GitHub repository (cloned via git)
+- **url**: Direct URL to a single `.md` skill file
+- **local**: Local filesystem path containing `.md` skill files
+
+### Package Commands
+
+```bash
+# Install a skill from configured sources
+skillos execute: "skill install research-assistant-agent"
+
+# Search for available skills across all sources
+skillos execute: "skill search quantum"
+
+# Update all installed skills to latest versions
+skillos execute: "skill update"
+
+# List all installed skills with source attribution
+skillos execute: "skill list"
+
+# Remove an installed skill
+skillos execute: "skill remove outdated-agent"
+```
+
+### packages.lock
+
+All installed skills are tracked in `system/packages.lock` with:
+- Source repository and path
+- Version and content hash
+- Install/update timestamps
+- Installation target path
+
+### Adding New Sources
+
+Edit `system/sources.list` and add a line:
+```
+github  myorg/my-custom-skills  main  agents/
+```
+
+Then run `skill update` to index the new source.
+
+### On-Demand Skill Acquisition
+
+SystemAgent can automatically install skills when a capability gap is detected during execution:
+1. Detects missing capability during planning
+2. Searches configured sources for matching skills
+3. Installs the best match
+4. Immediately uses the new skill for the current task
+
 ## Clean Restart
 
-To reset LLM-OS:
+To reset SkillOS:
 1. Clear `workspace/` directory including `workspace/state/` (preserves execution artifacts)
-2. Reset `system/memory_log.md` to empty state (clears learning history and behavioral patterns)
+2. Reset `system/SmartMemory.md` experience entries (clears learning history and behavioral patterns)
 3. Archive any valuable execution traces and behavioral learning data for training
 4. Ready for fresh scenario execution with clean sentient state
 

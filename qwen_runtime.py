@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Unified Qwen Runtime for LLMunix - Complete Implementation
+Unified Qwen Runtime for SkillOS - Complete Implementation
 Combines all features: interactive mode, sequential execution, corrected cepstral analysis
 """
 
@@ -235,14 +235,14 @@ Do not use tool calls - just provide your expert response directly.
     def interactive_mode(self):
         """Interactive REPL mode for the runtime."""
         print("\n" + "="*60)
-        print("           LLMunix Qwen Runtime - Interactive Mode")
+        print("           SkillOS Qwen Runtime - Interactive Mode")
         print("="*60)
         print("Type 'help' for commands, 'exit' to quit")
         print("Or simply type your goal to execute it.")
 
         while True:
             try:
-                user_input = input("\n🎯 llmunix> ").strip()
+                user_input = input("\n🎯 skillos> ").strip()
 
                 if user_input.lower() in ['exit', 'quit']:
                     print("Goodbye!")
@@ -323,7 +323,7 @@ if __name__ == "__main__":
         elif command == "test":
             # Quick test mode
             print("Running quick test...")
-            test_goal = "Create a simple Python script that prints 'Hello LLMunix!'"
+            test_goal = "Create a simple Python script that prints 'Hello SkillOS!'"
             result = runtime.run_goal(test_goal, max_turns=3)
             print(f"\nTest result: {result}")
         else:

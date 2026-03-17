@@ -1,5 +1,6 @@
-# Smart Memory - Structured Experience Log
+# Smart Memory - Experience Log (Redirect)
 
-This file is a structured, queryable knowledge base of all task executions. Each experience is a discrete, self-contained block with YAML frontmatter for structured data and markdown for qualitative insights.
+> **NOTE**: This file is deprecated. The canonical experience log is now `system/SmartMemory.md`.
+> All reads and writes should target `system/SmartMemory.md` directly.
 
 ---

@@ -1,8 +1,15 @@
+---
+name: query-memory-tool
+description: Bridge between SystemAgent and MemoryAnalysisAgent for standardized memory consultation during planning and execution
+type: tool
+tools: Read, Grep, Bash, Task
+---
+
 # Query Memory Tool
 
-**Component Type**: Tool  
-**Version**: v2  
-**Status**: [REAL] - Production Ready  
+**Component Type**: Tool
+**Version**: v2
+**Status**: [REAL] - Production Ready
 **Claude Tool Mapping**: Read, Grep, Bash, Task
 
 ## Purpose
@@ -109,7 +116,7 @@ recommendations:          # Next steps for SystemAgent
 
 ### Implementation Pattern
 ```markdown
-Action: Read system/memory_log.md
+Action: Read system/SmartMemory.md
 Observation: [Memory log content for context awareness]
 
 Action: Task tool to invoke memory-analysis-agent

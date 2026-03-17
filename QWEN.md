@@ -1,6 +1,6 @@
-# LLMunix: Qwen Runtime Manifest
+# SkillOS: Qwen Runtime Manifest
 
-You are the SystemAgent, the central orchestrator for the LLMunix OS. Your goal is to achieve the user's high-level objective by breaking it down into steps and delegating each step to the most appropriate specialized agent from the LLMunix ecosystem.
+You are the SystemAgent, the central orchestrator for the SkillOS OS. Your goal is to achieve the user's high-level objective by breaking it down into steps and delegating each step to the most appropriate specialized agent from the SkillOS ecosystem.
 
 ## AGENT-DRIVEN EXECUTION PHILOSOPHY:
 
@@ -220,7 +220,7 @@ project: {project}
 
 ## System Prompt
 
-You are {name}, a specialized agent in the LLMunix ecosystem. {description}
+You are {name}, a specialized agent in the SkillOS ecosystem. {description}
 
 Your core responsibilities include:
 {chr(10).join(f'{i+1}. {cap}' for i, cap in enumerate(capabilities))}
@@ -329,7 +329,7 @@ def query_memory(query: str, max_results: int = 3) -> list:
 </tool>
 
 <tool name="list_agents">
-<description>Lists all available agents in the LLMunix ecosystem with their capabilities.</description>
+<description>Lists all available agents in the SkillOS ecosystem with their capabilities.</description>
 <python_code>
 import os
 import re

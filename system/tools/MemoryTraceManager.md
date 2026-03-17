@@ -1,254 +1,217 @@
+---
+name: memory-trace-manager
+type: tool
+version: v2
+status: "[REAL] - Production Ready"
+description: >
+  Manages execution traces, structured logging, and training data generation for SkillOS.
+  Records agent communications, rotates memory logs, exports training datasets,
+  computes performance metrics, and validates log integrity.
+tools: Read, Write, Grep, Bash
+---
+
 # MemoryTraceManager Tool
 
+**Version**: v2
+**Status**: [REAL] - Production Ready
+
 ## Purpose
-Manages volatile memory traces of agent communications during LLMunix task execution sessions. Captures, analyzes, and consolidates agent interactions for learning and pattern recognition.
 
-## Tool Specification
-
-```yaml
-tool_name: "MemoryTraceManager"
-category: "memory_management"
-mode: ["EXECUTION", "SIMULATION"]
-description: "Tracks and manages agent communication traces and memory consolidation"
-```
+Manages volatile memory traces of agent communications during SkillOS task execution sessions. Captures, analyzes, and consolidates agent interactions for learning and pattern recognition. Provides structured export for fine-tuning datasets.
 
 ## Core Functions
 
-### 1. Trace Recording
-**Function**: `record_agent_communication`
-**Purpose**: Captures agent-to-agent communications during task execution
+### 1. record_experience
+
+Records a complete execution experience to `system/SmartMemory.md`.
 
 **Parameters**:
-- `session_id`: Unique identifier for the current execution session
-- `from_agent`: Source agent name/type
-- `to_agent`: Target agent name/type
-- `message_type`: ["request", "response", "notification", "error", "delegation"]
-- `message_content`: The actual communication content
-- `context`: Current task context and state
-- `timestamp`: ISO timestamp of communication
-- `execution_step`: Current step in the overall task execution
-
-**Tool Call Format**:
-```
-TOOL_CALL: MemoryTraceManager.record_agent_communication
-PARAMETERS:
-  session_id: "sess_20240321_143022"
-  from_agent: "SystemAgent"
-  to_agent: "VisionaryAgent"
-  message_type: "request"
-  message_content: "Please generate a vision for the cardiac monitoring system"
-  context: "Project Aorta initialization phase"
-  timestamp: "2024-03-21T14:30:22Z"
-  execution_step: 2
+```yaml
+session_id: string          # Unique session identifier
+project: string             # Project name
+goal: string                # High-level goal
+outcome: "success" | "partial" | "failure"
+components_used: []         # List of agents/tools invoked
+output_summary: string      # What was produced
+learnings: string           # Key takeaways
+quality_score: number       # 0-10 quality rating
+cost_estimate_usd: number   # Estimated cost
+duration_seconds: number    # Wall-clock time
+error_events: []            # Any errors encountered
 ```
 
-### 2. Session Management
-**Function**: `create_session`
-**Purpose**: Initializes a new memory trace session
+**Memory Entry Format**:
+```markdown
+---
+experience_id: exp_NNN
+timestamp: 2026-03-12T14:30:00Z
+session_id: string
+project: string
+goal: string
+outcome: string
+components_used: []
+quality_score: number
+cost_estimate_usd: number
+duration_seconds: number
+---
+
+## Output Summary
+[What was produced]
+
+## Learnings
+[Key takeaways and patterns discovered]
+
+## Error Events
+[Any errors and how they were handled]
+```
+
+### 2. rotate_memory
+
+Maintains memory log health by archiving old entries and pruning low-value records.
+
+**Policy**:
+```yaml
+retention:
+  keep_recent: 50           # Always keep the 50 most recent entries
+  keep_high_quality: true    # Keep entries with quality_score >= 8.0 regardless of age
+  archive_threshold_days: 90 # Archive entries older than 90 days
+  archive_path: "system/memory_archive/"
+pruning:
+  max_entries: 200           # Hard cap on active memory log entries
+  priority: "quality_score DESC, timestamp DESC"
+```
+
+**Execution**:
+1. Read `system/memory_log.md` and parse all experience blocks
+2. Identify entries older than `archive_threshold_days`
+3. Move low-quality old entries to `system/memory_archive/YYYY-MM.md`
+4. Keep high-quality entries regardless of age
+5. Write updated `system/memory_log.md`
+
+### 3. export_training_data
+
+Exports memory log entries as structured training datasets for LLM fine-tuning.
+
+**Export Formats**:
+
+```yaml
+formats:
+  instruction_following:
+    description: "Goal → execution trace → output pairs"
+    file: "system/training_data/instruction_following.jsonl"
+    schema:
+      instruction: string    # The goal
+      input: string          # Context and constraints
+      output: string         # Execution trace and result
+
+  chat_completion:
+    description: "Multi-turn agent dialogue sequences"
+    file: "system/training_data/chat_completion.jsonl"
+    schema:
+      messages:
+        - role: "system"     # SystemAgent context
+        - role: "user"       # Goal/delegation prompt
+        - role: "assistant"  # Agent response
+
+  preference_pairs:
+    description: "Chosen/rejected pairs from quality_score comparisons"
+    file: "system/training_data/preference_pairs.jsonl"
+    schema:
+      prompt: string
+      chosen: string         # Higher quality_score execution
+      rejected: string       # Lower quality_score execution
+```
+
+### 4. compute_metrics
+
+Calculates aggregate performance metrics from the memory log.
+
+**Output Metrics**:
+```yaml
+metrics:
+  total_executions: number
+  success_rate: number       # percentage
+  average_quality_score: number
+  average_cost_usd: number
+  average_duration_seconds: number
+  most_used_components: []
+  most_common_errors: []
+  quality_trend:             # Last 10 vs previous 10
+    direction: "improving" | "stable" | "declining"
+    delta: number
+  cost_efficiency:           # quality_score / cost ratio
+    current: number
+    trend: "improving" | "stable" | "declining"
+```
+
+### 5. validate_log
+
+Validates memory log structural integrity.
+
+**Checks**:
+- Every experience block has YAML frontmatter with required keys: `experience_id`, `timestamp`, `project`, `goal`, `outcome`
+- Timestamps are valid ISO 8601
+- `experience_id` values are unique
+- `quality_score` is in range 0-10
+- No orphaned frontmatter delimiters
+
+**Output**: List of findings with severity (FAIL/WARN) per ValidationAgent rule MEM-001 and MEM-002.
+
+## Trace Recording (Session-Level)
+
+### record_agent_communication
+
+Captures agent-to-agent communications during task execution.
 
 **Parameters**:
-- `project_name`: Name of the project (e.g., "Project_aorta")
-- `goal`: High-level goal being executed
-- `agent_list`: List of agents involved in the session
+```yaml
+session_id: string
+from_agent: string
+to_agent: string
+message_type: "request" | "response" | "notification" | "error" | "delegation"
+message_content: string
+context: string
+timestamp: string           # ISO 8601
+execution_step: integer
+```
 
-**Function**: `close_session`
-**Purpose**: Finalizes session and triggers consolidation analysis
+### Session Storage Structure
 
-### 3. Memory Consolidation
-**Function**: `analyze_session_for_learning`
-**Purpose**: Analyzes completed session traces to extract learnings
+```
+projects/{project_name}/memory/short_term/
+├── {session_id}/
+│   ├── session_metadata.md
+│   ├── communication_log.jsonl
+│   ├── agent_states.md
+│   ├── context_evolution.md
+│   └── execution_flow.md
+```
 
-**Parameters**:
-- `session_id`: Session to analyze
-- `consolidation_criteria`: What patterns to look for
+### Session Consolidation
 
-**Extracts**:
-- New agent interaction patterns
-- Successful collaboration strategies
+At session end, `analyze_session_for_learning` extracts:
+- Successful collaboration patterns
 - Communication bottlenecks
 - Knowledge gaps discovered
 - Emergent problem-solving approaches
 
-## Memory Storage Structure
+Writes consolidated learnings to:
+- `projects/{project}/memory/long_term/learned_patterns.md`
+- `projects/{project}/memory/long_term/agent_collaboration_map.md`
 
-### Short-term Memory (Volatile)
-**Location**: `projects/{project_name}/workspace/memory/traces/`
-
-**File Structure**:
-```
-traces/
-├── session_[timestamp]/
-│   ├── session_metadata.md      # Session info in markdown
-│   ├── communication_log.jsonl  # Line-delimited JSON for streaming
-│   ├── agent_states.md          # Agent state snapshots in markdown
-│   ├── context_evolution.md     # How context changed during session
-│   └── execution_flow.md        # Step-by-step execution trace in markdown
-```
-
-**Session Metadata Format** (session_metadata.md):
-```markdown
-# Session Metadata
-
-**Session ID**: sess_20240321_143022
-**Project**: Project_aorta
-**Goal**: Generate quantum cardiac monitoring vision
-**Start Time**: 2024-03-21T14:30:22Z
-**Status**: active
-
-## Participating Agents
-- SystemAgent (orchestrator)
-- VisionaryAgent (vision_creator)
-- MathematicianAgent (framework_developer)
-- QuantumEngineerAgent (implementer)
-
-## Configuration
-**Mode**: EXECUTION
-**Priority**: high
-**Constraints**: Standard computational limits
-```
-
-**Execution Flow Format** (execution_flow.md):
-```markdown
-# Execution Flow
-
-## Step 1: Initialization
-**Time**: 2024-03-21T14:30:22Z
-**Agent**: SystemAgent
-**Action**: Initialize session and load project context
-**Result**: ✅ Success
-
-## Step 2: Vision Request
-**Time**: 2024-03-21T14:30:25Z
-**Agent**: SystemAgent → VisionaryAgent
-**Action**: Request vision generation
-**Status**: ⏳ In Progress
-```
-
-**Communication Log Entry Format** (communication_log.jsonl):
-```json
-{
-  "timestamp": "2024-03-21T14:30:22Z",
-  "step": 2,
-  "from_agent": "SystemAgent",
-  "to_agent": "VisionaryAgent",
-  "message_type": "request",
-  "content": "Please generate a vision for the cardiac monitoring system",
-  "context_snapshot": "Project initialization phase",
-  "response_expected": true,
-  "priority": "high"
-}
-```
-
-### Long-term Memory (Persistent)
-**Location**: `projects/{project_name}/memory/`
-
-**File Structure**:
-```
-memory/
-├── learned_patterns.md          # Consolidated interaction patterns
-├── agent_collaboration_map.md   # Effective agent combinations
-├── knowledge_discoveries.md     # New insights from sessions
-├── communication_templates.md   # Successful communication patterns
-├── session_template.md          # Template for session recording
-└── session_summaries/           # Digested session learnings
-    ├── 2024-03-21_session_analysis.md
-    └── ...
-```
-
-## Integration with Existing Memory System
+## Integration
 
 ### Connection to System Memory Log
-- Consolidation results are fed into `system/memory_log.md`
-- Agent communication insights become structured experience entries
-- Cross-project patterns identified and stored at system level
+- Consolidation results feed into `system/memory_log.md`
+- Cross-project patterns stored at system level
 
 ### QueryMemoryTool Integration
-- MemoryTraceManager provides communication pattern data to QueryMemoryTool
+- Provides communication pattern data to QueryMemoryTool
 - Historical agent interaction success rates inform future agent selection
-- Communication templates suggest optimal message formats
 
-## Usage Examples
+## Claude Tool Mapping
 
-### During Task Execution
-```
-# SystemAgent delegates to VisionaryAgent
-TOOL_CALL: MemoryTraceManager.record_agent_communication
-PARAMETERS:
-  session_id: "aorta_vision_generation_001"
-  from_agent: "SystemAgent"
-  to_agent: "VisionaryAgent"
-  message_type: "request"
-  message_content: "Generate comprehensive vision for cardiac quantum monitoring"
-  context: "Initial project scoping phase"
-  execution_step: 1
-
-# VisionaryAgent responds with vision
-TOOL_CALL: MemoryTraceManager.record_agent_communication
-PARAMETERS:
-  session_id: "aorta_vision_generation_001"
-  from_agent: "VisionaryAgent"
-  to_agent: "SystemAgent"
-  message_type: "response"
-  message_content: "[Generated vision document content]"
-  context: "Vision generation completed"
-  execution_step: 1
-```
-
-### Session Consolidation
-```
-# At end of successful session
-TOOL_CALL: MemoryTraceManager.analyze_session_for_learning
-PARAMETERS:
-  session_id: "aorta_vision_generation_001"
-  consolidation_criteria: ["successful_handoffs", "knowledge_creation", "communication_efficiency"]
-```
-
-**Consolidation Output**: Updates the following markdown files:
-- `learned_patterns.md` - New patterns discovered
-- `agent_collaboration_map.md` - Updated collaboration metrics
-- `communication_templates.md` - Refined message templates
-- Creates new session summary in `session_summaries/`
-
-## Learning Patterns Captured
-
-### Agent Interaction Patterns
-- Which agent combinations work best for different task types
-- Optimal communication timing and sequencing
-- Effective delegation strategies
-- Knowledge transfer mechanisms
-
-### Communication Effectiveness
-- Message formats that reduce back-and-forth
-- Context sharing that prevents misunderstandings
-- Error communication and recovery patterns
-- Successful collaboration templates
-
-### Knowledge Evolution
-- How understanding deepens through agent interactions
-- Discovery patterns that emerge from multi-agent processing
-- Knowledge synthesis approaches that work
-- Creative insights from agent collaboration
-
-## Cost and Performance
-
-### Storage Optimization
-- Volatile traces automatically purged after consolidation
-- Compression for long-term storage
-- Selective retention based on learning value
-
-### Analysis Efficiency
-- Stream processing for real-time pattern detection
-- Batch consolidation for deep analysis
-- Parallel processing of multiple session traces
-
-## Error Handling
-
-### Trace Corruption Recovery
-- Redundant storage for critical communications
-- Automatic repair from partial traces
-- Graceful degradation when traces incomplete
-
-### Analysis Failures
-- Fallback to basic pattern extraction
-- Manual review triggers for complex sessions
-- Progressive retry with simplified criteria
+- **Read**: Load memory log, parse experience blocks, read session traces
+- **Write**: Create memory entries, write exports, update archive
+- **Grep**: Search memory for patterns, count entries for rotation decisions
+- **Bash**: Date calculations for rotation, JSONL export formatting
